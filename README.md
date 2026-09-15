@@ -1,9 +1,9 @@
 # Sistema de Reservas de Canchas Deportivas (Fútbol 7, Tenis y Pádel)
 
 # Presentado por:
-- Bruno Adolfo Medina Lara
-- Rodrigo
-- Annais
+- Bruno Medina
+- Antonio Navarro
+- Annais Legua
 
 ## Índice
 1. [De qué trata el problema](#de-qué-trata-el-problema)
