@@ -1,9 +1,9 @@
 # Sistema de Reservas de Canchas Deportivas
 
 # Presentado por:
-- Bruno Adolfo Medina Lara
-- Rodrigo
-- Annais
+- Bruno Medina 
+- Antonio Navarro   
+- Annais Legua
 
 ## Índice
 1. [Justificación del problema](#justificación-del-problema)
