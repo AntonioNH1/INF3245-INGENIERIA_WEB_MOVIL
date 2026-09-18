@@ -1,0 +1,7 @@
+{
+  "name": "reservas-canchas",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
