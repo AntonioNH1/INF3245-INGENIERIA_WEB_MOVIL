@@ -1,0 +1,107 @@
+/* Centra todo en la pantalla y restringe el ancho en pantallas grandes */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.custom-logo {
+  width: 220px; 
+  height: auto;
+  display: block; /* Obliga a la imagen a comportarse como un bloque */
+  margin: 0 auto 5px auto; /* Centra a la izquierda/derecha y deja 5px abajo */
+  mix-blend-mode: multiply; 
+}
+
+.subtitle {
+  color: var(--ion-color-medium);
+  margin-top: 5px;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+  text-align: center; /* Obliga al texto a centrarse */
+  line-height: 1.4; /* Da un poco de espacio entre las dos líneas para que se lea mejor */
+  padding: 0 10px; /* Evita que el texto choque con los bordes en pantallas más chicas */
+}
+
+/* Cajas de texto minimalistas flotantes */
+.custom-input {
+  --background: #ffffff;
+  --padding-start: 15px;
+  --border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 20px;
+}
+
+/* Botón con sombra de color */
+.login-btn {
+  --border-radius: 16px;
+  --box-shadow: 0 8px 16px rgba(var(--ion-color-primary-rgb), 0.3);
+  margin-top: 30px;
+  height: 54px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Estilo para resaltar la pregunta inicial */
+.pregunta-destacada {
+  font-weight: 700; /* Letra más gruesa */
+  color: #1a1a1a; /* Un tono casi negro para que destaque del texto gris */
+  font-size: 1.2rem; /* Un pelito más grande */
+  display: inline-block; /* Ayuda a que el salto de línea se vea más ordenado */
+  margin-bottom: 4px; /* Separación con la línea de abajo */
+}
+
+.register-prompt p {
+  color: var(--ion-color-medium);
+  font-size: 0.95rem;
+  margin-top: 25px;
+}
+.link-text {
+  color: var(--ion-color-primary);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+
+.link-text:hover {
+  color: #003bb3; 
+}
+
+/* Caja roja para errores en el login */
+.error-box {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid #fca5a5;
+  box-shadow: 0 4px 6px rgba(185, 28, 28, 0.1);
+}
+
+/* Estilos para el contenedor del ojito en el login */
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-input {
+  --padding-end: 55px; 
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 36px;
+  height: auto;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 4px;
+}

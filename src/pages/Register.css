@@ -1,0 +1,116 @@
+/* Contenedor principal: Centra todo en la pantalla */
+.register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* Logo FaltaUno centrado y sin fondo blanco cuadrado */
+.custom-logo {
+  width: 220px;
+  height: auto;
+  display: block;
+  margin: 0 auto 5px auto;
+  mix-blend-mode: multiply;
+}
+
+/* Título principal */
+.register-title {
+  font-weight: 800;
+  font-size: 2.2rem;
+  color: var(--ion-color-primary);
+  margin-top: 5px;
+  margin-bottom: 5px;
+  letter-spacing: -1px;
+  text-align: center;
+}
+
+/* Subtítulo */
+.subtitle {
+  color: var(--ion-color-medium);
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  text-align: center;
+  line-height: 1.4;
+  padding: 0 10px;
+}
+
+/* Caja roja de alerta para errores de validación */
+.error-box {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid #fca5a5;
+  box-shadow: 0 4px 6px rgba(185, 28, 28, 0.1);
+}
+
+/* Cajas de texto (Inputs) flotantes y con sombra */
+.register-form .custom-input {
+  --background: #ffffff;
+  --padding-start: 15px;
+  --border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 12px; 
+}
+
+/* --- MAGIA DE LOS OJITOS PARA LA CONTRASEÑA --- */
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Espacio a la derecha para que el texto no tape a los ojos */
+.password-input {
+  --padding-end: 55px; 
+}
+
+/* Ojos más grandes y centrados verticalmente */
+.toggle-eye {
+  position: absolute;
+  right: 12px;
+  top: 12px; /* Ajusta este valor si necesitas subirlo o bajarlo un poco */
+  width: 70px; /* Aumentamos el tamaño para que se noten bien */
+  height: auto;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 4px;
+}
+
+/* --- BOTÓN Y ENLACE FINAL --- */
+.login-btn {
+  --border-radius: 12px;
+  --box-shadow: 0 8px 16px rgba(var(--ion-color-primary-rgb), 0.3);
+  margin-top: 20px;
+  height: 54px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Texto de "¿Ya tienes una cuenta?" */
+.register-prompt p {
+  color: var(--ion-color-medium);
+  font-size: 0.95rem;
+  margin-top: 25px;
+}
+
+/* Enlace azul brillante */
+.link-text {
+  color: #0054e9;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Efecto del enlace al pasar el mouse */
+.link-text:hover {
+  color: #003bb3; 
+}
