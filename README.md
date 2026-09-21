@@ -98,10 +98,10 @@ Según lo que pide el proyecto, acá están nuestras 7 funciones principales (si
 Las 5 cosas técnicas que tienen que funcionar impecable.
 
 - **RNF-01 (Que se vea bien):** La app tiene que acomodarse perfecto a la pantalla del celular para los que reservan, y verse bien en un computador para los dueños de las canchas.
-- **RNF-02 (Rapidita):** Al buscar una cancha, los resultados tienen que aparecer casi al instante para que la gente no se aburra y cierre la app.
+- **RNF-02 (Rápida):** Al buscar una cancha, los resultados tienen que aparecer casi al instante para que la gente no se aburra y cierre la app.
 - **RNF-03 (Seguridad básica):** Alguien que solo viene a jugar no puede meterse por ningún motivo a cambiar los precios o borrar las canchas del recinto. Eso es solo para el administrador.
 - **RNF-04 (Cero choques):** Si dos personas están intentando reservar la última cancha de Pádel de las 20:00 al mismo tiempo, el sistema tiene que bloquearla rápido para el primero que hizo clic, para que no se arriende dos veces.
-- **RNF-05 (Colores claritos):** Tiene que ser súper obvio cuándo una cancha está disponible (ej. color verde) y cuándo está ocupada (ej. color gris), para que la gente no tenga que pensar mucho.
+- **RNF-05 (Colores claros):** Tiene que ser súper obvio cuándo una cancha está disponible (ej. color verde) y cuándo está ocupada (ej. color gris), para que la gente no tenga que pensar mucho.
 
 ---
 
