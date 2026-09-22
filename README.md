@@ -143,7 +143,7 @@ Hicimos la navegación de la manera más lógica y directa posible. Queremos que
 ---
 
 ## Nuestros diseños en Figma
-
+https://www.figma.com/design/HMk4Bjnwq0eAr6vTQ2NcWn/Sin-t%C3%ADtulo?node-id=0-1&t=9lYpaFwlSHBVut0G-1
 ---
 
 ## Las herramientas que usamos
