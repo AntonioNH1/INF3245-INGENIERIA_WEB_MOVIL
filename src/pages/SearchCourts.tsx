@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, useIonRouter } from '@ionic/react';
+import { IonPage, IonContent, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonButton, IonButtons, useIonRouter, IonIcon } from '@ionic/react';
+import { menuOutline, personOutline, tennisballOutline, cardOutline, globeOutline, shieldCheckmarkOutline, logOutOutline } from 'ionicons/icons';
 import './SearchCourts.css';
 
 const SearchCourts: React.FC = () => {
   const [userName, setUserName] = useState('Usuario');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Estado para abrir/cerrar el menú
   const router = useIonRouter();
 
   useEffect(() => {
-    const storedName = localStorage.getItem('userName');
-    if (storedName) {
+    const logged = localStorage.getItem('user_logged_in') === 'true';
+    setIsLoggedIn(logged);
+
+    if (logged) {
+      const storedName = localStorage.getItem('userName') || 'Usuario';
       setUserName(storedName);
+    } else {
+      setUserName('Usuario');
     }
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user_logged_in');
+    localStorage.removeItem('userName');
+    setIsLoggedIn(false);
+    setUserName('Usuario');
+    setIsSidebarOpen(false); // Cierra el menú al salir
+  };
 
   const categories = [
     { id: 'futbol-7', name: 'Fútbol 7', image: '/recuadro futbol 7.jpg', desc: 'Canchas de pasto sintético iluminadas' },
@@ -24,20 +41,51 @@ const SearchCourts: React.FC = () => {
   ];
 
   const handleSelectCategory = (categoryId: string) => {
-    router.push(`/cliente/horarios/${categoryId}`);
+    if (!isLoggedIn) {
+      setShowAuthModal(true);
+    } else {
+      router.push(`/cliente/horarios/${categoryId}`);
+    }
   };
 
   return (
     <IonPage>
-    <IonHeader translucent={true} className="header-custom-grande">
+      <IonHeader translucent={true} className="header-custom-grande">
         <IonToolbar className="translucent-toolbar">
           <div className="toolbar-logo-container">
             <img src="/FaltaUno-Inicio.png" alt="FaltaUno Inicio" className="toolbar-logo-img" />
           </div>
+          
+          <IonButtons slot="end" style={{ marginRight: '16px', gap: '12px' }}>
+            {isLoggedIn ? (
+              // Botón de Hamburguesa en lugar de "Cerrar Sesión"
+              <button
+                className="btn-hamburger"
+                onClick={() => setIsSidebarOpen(true)}
+              >
+                <IonIcon icon={menuOutline} />
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => router.push('/login')}
+                  style={{ background: 'transparent', border: 'none', color: '#1e4b8f', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}
+                >
+                  Iniciar Sesion
+                </button>
+                <button
+                  onClick={() => router.push('/registro')}
+                  style={{ background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '999px', padding: '6px 16px', fontWeight: 700, fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 6px rgba(37,99,235,0.35)' }}
+                >
+                  REGISTRARSE
+                </button>
+              </>
+            )}
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
       
-      <IonContent className="ion-padding" style={{ '--background': 'url(/FondoMenuPrincipal.jpg) no-repeat center center fixed', 'backgroundSize': 'cover' }}>
+      <IonContent className="ion-padding" style={{ '--background': 'url(/FondoMenuPrincipal.jpg) no-repeat center center fixed', backgroundSize: 'cover' } as React.CSSProperties}>
         <div className="welcome-section">
           <h2>¡Hola, {userName}! 👋</h2>
           <p>¿Qué deporte jugamos hoy? Selecciona una categoría para ver los horarios.</p>
@@ -62,6 +110,61 @@ const SearchCourts: React.FC = () => {
             </IonCard>
           ))}
         </div>
+
+        {/* Modal de Error de Sesión */}
+        {showAuthModal && (
+          <div className="auth-modal-backdrop" onClick={() => setShowAuthModal(false)}>
+            <div className="auth-modal-box" onClick={(e) => e.stopPropagation()}>
+              <div className="auth-modal-icon-wrapper">
+                <img src="/Simbolo error FaltaUno.png" alt="Alerta Iniciar Sesión" className="auth-error-icon" />
+              </div>
+              <h2 className="auth-modal-title">¡Inicia Sesion Para Continuar!</h2>
+              <p className="auth-modal-message">Debes iniciar sesión o registrarte para poder reservar tu cancha y asegurar tu horario</p>
+              <div className="auth-modal-actions">
+                <button className="btn-modal-cancel" onClick={() => setShowAuthModal(false)}>Cancelar</button>
+                <button className="btn-modal-login" onClick={() => { setShowAuthModal(false); router.push('/login'); }}>Inicia Sesion</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================
+            BARRA LATERAL DESPLEGABLE (SUBMENÚ)
+            ========================================= */}
+        {/* Fondo oscuro al abrir el menú */}
+        {isSidebarOpen && (
+          <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+        )}
+
+        {/* Contenedor del Menú Lateral */}
+        <div className={`custom-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+          <h3 className="sidebar-title">MI PERFIL</h3>
+          
+          <div className="sidebar-menu-list">
+            <button className="sidebar-item active">
+              <IonIcon icon={personOutline} /> Datos Personales
+            </button>
+            <button className="sidebar-item">
+              <IonIcon icon={tennisballOutline} /> Mis Reservas
+            </button>
+            <button className="sidebar-item">
+              <IonIcon icon={cardOutline} /> Métodos de Pago
+            </button>
+            <button className="sidebar-item">
+              <IonIcon icon={globeOutline} /> Preferencias Regionales
+            </button>
+            <button className="sidebar-item">
+              <IonIcon icon={shieldCheckmarkOutline} /> Seguridad
+            </button>
+
+            <hr className="sidebar-divider" />
+
+            <button className="sidebar-btn-logout" onClick={handleLogout}>
+              <IonIcon icon={logOutOutline} /> Cerrar Sesión
+            </button>
+          </div>
+        </div>
+
       </IonContent>
     </IonPage>
   );

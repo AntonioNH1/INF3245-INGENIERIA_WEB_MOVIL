@@ -10,15 +10,22 @@ const Login: React.FC = () => {
   
   const router = useIonRouter();
 
-const handleLogin = () => {
+  const handleLogin = () => {
     if (!userEmail || !userPassword) {
       setErrorMsg('Debes completar todos los campos para iniciar sesión.');
       return;
     }
 
     setErrorMsg('');
-    localStorage.setItem('userName', 'Antonio'); 
-    router.push('/cliente/inicio');
+    const extractedName = userEmail.includes('@') ? userEmail.split('@')[0] : userEmail;
+    const formattedName = extractedName.charAt(0).toUpperCase() + extractedName.slice(1);
+    
+    // Guardamos los datos de sesión en la memoria del navegador
+    localStorage.setItem('userName', formattedName); 
+    localStorage.setItem('user_logged_in', 'true'); 
+    
+    // Usamos window.location para forzar la recarga y que SearchCourts detecte el cambio de estado
+    window.location.href = '/cliente/inicio';
   };
 
   return (

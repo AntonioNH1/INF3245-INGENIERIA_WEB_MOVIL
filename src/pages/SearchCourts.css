@@ -1,21 +1,17 @@
-ion-content {
-  --background: transparent !important;
-  background-image: url('/FondoMenuPrincipal.jpg') !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-attachment: fixed !important;
-}
-
+/* =========================================================
+   BARRA SUPERIOR Y LOGO
+   ========================================================= */
 .header-custom-grande, 
 .header-custom-grande ion-toolbar.translucent-toolbar {
-  --background: rgba(255, 255, 255, 0.85) !important;
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-  height: 60px !important;
+  --background: rgba(215, 220, 228, 0.35) !important;
+  background: rgba(215, 220, 228, 0.35) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: none;
+  height: 55px !important;
+  min-height: 55px !important;
   position: relative !important;
-  overflow: visible !important;
+  overflow: visible !important; 
 }
 
 .toolbar-logo-container {
@@ -23,69 +19,96 @@ ion-content {
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
-  width: auto !important;
-  height: auto !important;
-  overflow: visible !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 100 !important;
+  pointer-events: none;
 }
 
 .toolbar-logo-img {
-  height: 150px !important;
+  height: 150px !important; 
+  max-height: none !important;
   width: auto !important;
   object-fit: contain;
   mix-blend-mode: multiply;
-  filter: contrast(1.2);
 }
 
+/* =========================================================
+   SECCIÓN DE SALUDO 
+   ========================================================= */
 .welcome-section {
-  margin-bottom: 25px;
   text-align: center;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 15px 20px;
-  border-radius: 16px;
-  backdrop-filter: blur(6px);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  padding: 10px 20px 25px;
+  margin-bottom: 0;
 }
 
 .welcome-section h2 {
-  font-weight: 800;
-  color: #ffffff;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: 500;
+  font-size: 2.2rem;
+  color: #1f4860;
   margin-bottom: 5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  text-shadow: none;
 }
 
 .welcome-section p {
-  color: #f1f1f1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  color: #2c3e50;
+  font-weight: 500;
+  text-shadow: none;
 }
 
+/* =========================================================
+   GRILLA DE CANCHAS 
+   ========================================================= */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(4, 240px);
+  gap: 28px 34px;
+  justify-content: center;
+  padding-bottom: 40px;
 }
 
+@media (max-width: 1100px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 240px);
+  }
+}
+
+@media (max-width: 560px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+    padding: 0 20px 40px;
+  }
+}
+
+/* =========================================================
+   DISEÑO DE LAS TARJETAS (Borde negro, pie gris)
+   ========================================================= */
 .category-card {
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin: 0;
-  background: #111;
-  border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+  background: #1a1a1a;
+  border: 3.5px solid #0b0b0b !important;
 }
 
 .category-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-  border-color: #ffffff !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+  border-color: #000000 !important;
 }
 
 .card-image-container {
   position: relative;
-  height: 140px;
+  height: 115px;
   width: 100%;
   overflow: hidden;
 }
@@ -107,7 +130,7 @@ ion-content {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+  background: linear-gradient(to bottom, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.75) 100%);
 }
 
 .card-header-absolute {
@@ -116,31 +139,276 @@ ion-content {
   left: 0;
   width: 100%;
   z-index: 2;
-  padding: 12px 16px;
+  padding: 6px 12px;
 }
 
 .card-title-white {
   color: #ffffff !important;
   font-weight: 800;
-  font-size: 1.4rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  font-size: 1.05rem;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
+/* Pie gris de la tarjeta */
 .card-content-custom {
-  background: rgba(20, 20, 20, 0.85);
+  background: rgba(138, 145, 150, 0.92);
   backdrop-filter: blur(5px);
-  color: #e0e0e0;
-  padding: 14px 16px;
+  color: #ffffff;
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .card-content-custom p {
-  font-size: 0.9rem;
-  margin: 0 0 10px 0;
-  color: #ccc;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0 0 6px 0;
+  color: #f3f4f6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 
+/* Botón "VER HORARIOS" estilo píldora */
 .btn-ver-horarios {
+  --background: #d1d5db;
+  --background-hover: #ffffff;
+  --color: #111827;
+  --border-radius: 999px;
+  --padding-top: 2px;
+  --padding-bottom: 2px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  margin-top: 4px;
+  font-size: 0.70rem;
   font-weight: 700;
+  height: 24px;
+  min-height: 24px;
+  letter-spacing: 0.2px;
+  text-transform: none;
+}
+
+/* =========================================================
+   CARTEL MODAL DE ERROR ("¡Inicia Sesion Para Continuar!")
+   ========================================================= */
+.auth-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.auth-modal-box {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  background: rgba(220, 228, 238, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 26px;
+  padding: 58px 32px 28px;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.auth-modal-icon-wrapper {
+  position: absolute;
+  top: -54px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 115px;
+  height: 115px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-error-icon {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  border-radius: 12px;
+}
+
+.auth-modal-title {
+  color: #0f172a;
+  font-size: 27px;
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+.auth-modal-message {
+  color: #1e293b;
+  font-size: 20px;
+  line-height: 1.35;
+  font-weight: 400;
+  margin: 0 auto 28px;
+  max-width: 410px;
+}
+
+.auth-modal-actions {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.btn-modal-cancel {
+  background: transparent;
+  border: none;
+  color: #1d4ed8;
+  font-size: 19px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-modal-login {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 38px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+/* =========================================================
+   BOTÓN HAMBURGUESA
+   ========================================================= */
+.btn-hamburger {
+  background: transparent;
+  border: none;
+  color: #1f4860;
+  font-size: 38px; /* Tamaño del ícono de 3 barras */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 0.2s;
+}
+
+.btn-hamburger:hover {
+  transform: scale(1.1);
+}
+
+/* =========================================================
+   SIDEBAR (SUBMENÚ LATERAL)
+   ========================================================= */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9998;
+}
+
+.custom-sidebar {
+  position: fixed;
+  top: 0;
+  right: -320px; 
+  width: 300px;
+  height: 100vh;
+  background: rgba(220, 230, 240, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+  z-index: 9999;
+  transition: right 0.35s ease-in-out;
+  padding: 90px 24px 40px; 
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Clase que activa la animación de entrada */
+.custom-sidebar.open {
+  right: 0;
+}
+
+.sidebar-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1a3644;
+  margin: 0 0 35px 0;
+  padding-left: 5px;
   letter-spacing: 0.5px;
-  border-radius: 8px;
+}
+
+.sidebar-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a3644;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  text-align: left;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-2px);
+}
+
+.sidebar-item ion-icon {
+  font-size: 22px;
+  color: #728b96;
+}
+
+/* Para simular el botón seleccionado (ej: la pelota de tenis verde) */
+.sidebar-item.active ion-icon {
+  color: #92b82e;
+}
+
+.sidebar-divider {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  margin: 20px 0;
+}
+
+/* Botón azul de Cerrar Sesión dentro del menú */
+.sidebar-btn-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+  margin-top: auto; /* Lo empuja hacia el fondo de la pantalla */
+  transition: background 0.2s;
+}
+
+.sidebar-btn-logout:hover {
+  background: #1d4ed8;
 }

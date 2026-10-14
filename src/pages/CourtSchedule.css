@@ -1,36 +1,188 @@
-.schedule-container {
-  max-width: 600px;
-  margin: 0 auto;
+/* Fondo general de la vista */
+.schedule-content {
+  --background: url('/FondoMenuPrincipal.jpg') no-repeat center center fixed;
+  background-size: cover;
 }
-.subtitle-sched {
-  color: var(--ion-color-medium);
-  margin-bottom: 20px;
-}
-.schedule-card {
+
+/* Botón de volver */
+.btn-back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 600;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  gap: 8px;
+  cursor: pointer;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 8px 16px;
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
 }
-.schedule-info {
+
+.btn-back ion-icon {
+  font-size: 20px;
+}
+
+/* Contenedor central*/
+.schedule-main-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding-top: 100px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10; 
+}
+
+/* Panel superior de Búsqueda*/
+.search-panel {
+  display: flex;
+  align-items: center;
+  background: #dce4cd; 
+  border: 1px solid #7a7a7a;
+  border-radius: 16px;
+  padding: 15px 30px;
+  gap: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.search-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 5px;
 }
-.time-text {
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-.status-badge {
-  font-size: 0.85rem;
+
+.search-field label {
   font-weight: 600;
+  color: #1a1a1a;
+  font-size: 14px;
 }
-.status-badge.available {
-  color: #10b981;
+
+.search-field input, 
+.search-field select {
+  background: transparent;
+  border: 1px solid #888;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 14px;
+  color: #1a1a1a;
+  outline: none;
 }
-.status-badge.booked {
-  color: #ef4444;
+
+.search-divider {
+  width: 1px;
+  height: 40px;
+  background: #888;
+  margin: 0 10px;
+}
+
+.btn-buscar {
+  background: #4a7aff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(74, 122, 255, 0.3);
+  margin-left: 10px;
+}
+
+/* Estilos de la Tabla */
+.table-container {
+  width: 100%;
+  background: rgba(245, 245, 245, 0.95);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.courts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.courts-table th {
+  background: #e0e5db;
+  padding: 12px 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.courts-table th:last-child {
+  border-right: none;
+}
+
+.courts-table td {
+  padding: 14px 15px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  font-weight: 500;
+}
+
+.courts-table td:last-child {
+  border-right: none;
+}
+
+.courts-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Botones de Estado */
+.status-badge {
+  padding: 6px 20px;
+  border-radius: 999px;
+  border: none;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  width: 110px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.badge-ocupada {
+  background: #ef4444; 
+}
+
+.badge-reservar {
+  background: #22c55e;
+}
+
+/* =========================================================
+   IMAGEN DEL JUGADOR (Esquina inferior derecha)
+   ========================================================= */
+.sport-mascot {
+  position: absolute;
+  bottom: 0;
+  right: 2%; 
+  height: 65vh; 
+  max-height: 550px; 
+  min-height: 350px;
+  object-fit: contain;
+  z-index: 20; 
+  pointer-events: none; 
+  filter: drop-shadow(-5px 5px 15px rgba(0,0,0,0.4)); 
+}
+
+@media (max-width: 768px) {
+  .sport-mascot {
+    height: 45vh;
+    opacity: 0.85; 
+    right: -10%;
+  }
 }
