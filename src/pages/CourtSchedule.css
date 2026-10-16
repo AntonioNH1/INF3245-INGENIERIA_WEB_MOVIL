@@ -1,27 +1,26 @@
-/* Fondo general de la vista */
+/* Fondo general */
 .schedule-content {
-  --background: url('/FondoMenuPrincipal.jpg') no-repeat center center fixed;
+  --background: url('/FondoMenuPrincipal.jpg') no-repeat center center;
   background-size: cover;
 }
 
-/* Botón de volver */
+/* Botón para volver */
 .btn-back {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: transparent;
-  border: none;
-  color: #1a1a1a;
-  font-size: 16px;
-  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.7);
-  padding: 8px 16px;
-  border-radius: 8px;
   backdrop-filter: blur(5px);
 }
 
@@ -29,30 +28,32 @@
   font-size: 20px;
 }
 
-/* Contenedor central*/
+/* Contenedor central */
 .schedule-main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 100px;
+  position: relative;
+  z-index: 10;
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  position: relative;
-  z-index: 10; 
+  padding: 100px 12px 30px;
+  box-sizing: border-box;
 }
 
-/* Panel superior de Búsqueda*/
+/* Panel de búsqueda */
 .search-panel {
   display: flex;
   align-items: center;
-  background: #dce4cd; 
-  border: 1px solid #7a7a7a;
-  border-radius: 16px;
-  padding: 15px 30px;
+  justify-content: center;
   gap: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  padding: 15px 30px;
+  border: 1px solid #7a7a7a;
+  border-radius: 16px;
+  background: #dce4cd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .search-field {
@@ -63,47 +64,63 @@
 }
 
 .search-field label {
-  font-weight: 600;
   color: #1a1a1a;
   font-size: 14px;
+  font-weight: 600;
 }
 
-.search-field input, 
+.search-field input,
 .search-field select {
-  background: transparent;
+  box-sizing: border-box;
+  padding: 7px 8px;
   border: 1px solid #888;
   border-radius: 6px;
-  padding: 5px 10px;
+  background-color: #f8faf5;
+  color: #243746;
   font-size: 14px;
-  color: #1a1a1a;
   outline: none;
+}
+
+.search-field .schedule-date-input {
+  width: 145px;
+  color-scheme: light;
+  cursor: pointer;
+}
+
+.search-field .schedule-time-select {
+  width: 130px;
+  cursor: pointer;
 }
 
 .search-divider {
   width: 1px;
   height: 40px;
-  background: #888;
   margin: 0 10px;
+  background: #888;
 }
 
 .btn-buscar {
-  background: #4a7aff;
-  color: white;
+  margin-left: 10px;
+  padding: 10px 24px;
   border: none;
   border-radius: 12px;
-  padding: 10px 24px;
+  background: #4a7aff;
+  color: white;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(74, 122, 255, 0.3);
-  margin-left: 10px;
 }
 
-/* Estilos de la Tabla */
+.btn-buscar:hover {
+  background: #3568ed;
+}
+
+/* Tabla */
 .table-container {
   width: 100%;
-  background: rgba(245, 245, 245, 0.95);
-  border-radius: 8px;
   overflow: hidden;
+  border-radius: 8px;
+  background: rgba(245, 245, 245, 0.95);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
@@ -114,75 +131,95 @@
 }
 
 .courts-table th {
-  background: #e0e5db;
   padding: 12px 15px;
-  font-weight: 600;
-  color: #1a1a1a;
-  border-bottom: 1px solid #ccc;
   border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  background: #e0e5db;
+  color: #1a1a1a;
+  font-weight: 600;
 }
 
-.courts-table th:last-child {
+.courts-table th:last-child,
+.courts-table td:last-child {
   border-right: none;
 }
 
 .courts-table td {
   padding: 14px 15px;
-  color: #333;
-  border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  color: #333;
   font-weight: 500;
 }
 
-.courts-table td:last-child {
-  border-right: none;
-}
-
-.courts-table tr:last-child td {
+.courts-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* Botones de Estado */
+/* Botones de reserva */
 .status-badge {
-  padding: 6px 20px;
-  border-radius: 999px;
-  border: none;
-  color: white;
-  font-weight: 600;
-  font-size: 13px;
   width: 110px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  padding: 6px 20px;
+  border: none;
+  border-radius: 999px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .badge-ocupada {
-  background: #ef4444; 
+  background: #ef4444;
+  cursor: not-allowed;
 }
 
 .badge-reservar {
   background: #22c55e;
+  cursor: pointer;
 }
 
-/* =========================================================
-   IMAGEN DEL JUGADOR (Esquina inferior derecha)
-   ========================================================= */
-.sport-mascot {
+.badge-reservar:hover {
+  background: #16a34a;
+}
+
+/* Mascota deportiva: desplazada hacia la derecha */
+/* Mascota deportiva: desplazada hacia la derecha (Actualizado) */
+.sport-mascot-container {
   position: absolute;
-  bottom: 0;
-  right: 2%; 
-  height: 65vh; 
-  max-height: 550px; 
-  min-height: 350px;
-  object-fit: contain;
-  z-index: 20; 
-  pointer-events: none; 
-  filter: drop-shadow(-5px 5px 15px rgba(0,0,0,0.4)); 
+  right: -8%;
+  bottom: 100px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 50vw;
+  min-width: 450px;
+  max-width: 700px;
+  z-index: 5;
+  pointer-events: none;
 }
 
+.sport-mascot {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
+  object-position: bottom right;
+  filter: drop-shadow(-5px 5px 10px rgba(0, 0, 0, 0.3));
+}
+
+/* Pantallas pequeñas */
 @media (max-width: 768px) {
+  /* ... (mantén lo que ya tenías aquí para el resto) ... */
+  
+  .sport-mascot-container {
+    right: -3%;
+    width: 190px;
+    max-width: 42vw;
+    bottom: 0; /* Ajuste para móvil si es necesario */
+  }
+
   .sport-mascot {
-    height: 45vh;
-    opacity: 0.85; 
-    right: -10%;
+    max-height: 42vh;
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IonPage, IonContent, useIonRouter, IonIcon } from '@ionic/react';
+import { IonPage, IonContent, IonIcon, useIonRouter } from '@ionic/react';
 import { arrowBackOutline } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import './CourtSchedule.css';
@@ -7,14 +7,13 @@ import './CourtSchedule.css';
 const SPORT_MASCOTS: Record<string, string> = {
   'futbol-7': '/Imagen Messi FaltaUno.png',
   'futbol-11': '/Imagen Cristiano FaltaUno.png',
-  'padel': '/Jugador Padel FaltaUno.png',
-  'tenis': '/Jugador Tenis FaltaUno.png',
-  'bask': '/LebronJames FaltaUno.png',
-  'voley': '/Jugador Voleybol FaltaUno.png',
-  'pingpong': '/Jugador PingPong FaltaUno.png',
+  padel: '/Jugador Padel FaltaUno.png',
+  tenis: '/Jugador Tenis FaltaUno.png',
+  bask: '/LebronJames FaltaUno.png',
+  voley: '/Jugador Voleybol FaltaUno.png',
+  pingpong: '/Jugador PingPong FaltaUno.png',
 };
 
-// Interfaz para definir cómo es una cancha en la tabla
 interface CourtData {
   id: number;
   name: string;
@@ -24,13 +23,11 @@ interface CourtData {
 
 const CourtSchedule: React.FC = () => {
   const router = useIonRouter();
-  const { id } = useParams<{ id: string }>(); 
-  
-  // Estados para los selectores
-  const [selectedDate, setSelectedDate] = useState('2026-09-20');
-  const [selectedTime, setSelectedTime] = useState('12:00 - 13:00'); // Formato exacto a mostrar
+  const { id } = useParams<{ id: string }>();
 
-  // Estado para la tabla de canchas
+  const [selectedDate, setSelectedDate] = useState('2026-09-20');
+  const [selectedTime, setSelectedTime] = useState('12:00 - 13:00');
+
   const [tableData, setTableData] = useState<CourtData[]>([
     { id: 1, name: 'Cancha 1', time: '12:00 - 13:00', status: 'Ocupada' },
     { id: 2, name: 'Cancha 2', time: '12:00 - 13:00', status: 'Reservar' },
@@ -39,67 +36,75 @@ const CourtSchedule: React.FC = () => {
     { id: 5, name: 'Cancha 5', time: '12:00 - 13:00', status: 'Ocupada' },
   ]);
 
-  const mascotImage = SPORT_MASCOTS[id || 'futbol-7'] || SPORT_MASCOTS['futbol-7'];
+  const sportId = id || 'futbol-7';
+  const mascotImage = SPORT_MASCOTS[sportId] || SPORT_MASCOTS['futbol-7'];
 
-  // Función que simula la búsqueda en base de datos
   const handleBuscar = () => {
-    // Generamos una nueva lista de canchas con la HORA ACTUALIZADA
-    // y mezclamos aleatoriamente si están ocupadas o libres para darle realismo
     const newResults: CourtData[] = [1, 2, 3, 4, 5].map((courtNum) => ({
       id: courtNum,
       name: `Cancha ${courtNum}`,
-      time: selectedTime, // Aquí inyectamos la hora que el usuario eligió en el selector
-      status: Math.random() > 0.4 ? 'Reservar' : 'Ocupada' // 60% probabilidad de estar libre
+      time: selectedTime,
+      status: Math.random() > 0.4 ? 'Reservar' : 'Ocupada',
     }));
-
     setTableData(newResults);
   };
 
-  // Forzar la apertura del calendario al hacer click en cualquier parte del input
+  // Función extraída para mantener el JSX limpio
+  const handleReservar = (court: CourtData) => {
+    if (court.status === 'Reservar') {
+      alert(`Has seleccionado la ${court.name} para las ${court.time} del día ${selectedDate}`);
+    }
+  };
+
   const openDatePicker = (e: React.MouseEvent<HTMLInputElement>) => {
-    const input = e.target as HTMLInputElement;
+    const input = e.currentTarget;
     try {
       if ('showPicker' in HTMLInputElement.prototype) {
         input.showPicker();
       }
-    } catch (error) {
-      // Navegadores antiguos lo ignorarán
+    } catch {
+      // Fallback silencioso
     }
   };
 
   return (
     <IonPage>
       <IonContent fullscreen className="schedule-content">
-        
-        <button className="btn-back" onClick={() => router.push('/cliente/inicio')}>
-          <IonIcon icon={arrowBackOutline} /> Volver al Inicio
+        {/* Botón para volver al inicio */}
+        <button
+          type="button"
+          className="btn-back"
+          onClick={() => router.push('/cliente/inicio')}
+        >
+          <IonIcon icon={arrowBackOutline} />
+          Volver al Inicio
         </button>
 
         <div className="schedule-main-container">
-          
-          {/* Panel de Búsqueda (Fecha y Hora) */}
+          {/* Panel de búsqueda */}
           <div className="search-panel">
             <div className="search-field">
-              <label>Fecha</label>
-              <div className="input-with-icon">
-                <input 
-                  type="date" 
-                  value={selectedDate} 
-                  onChange={(e) => setSelectedDate(e.target.value)} 
-                  onClick={openDatePicker} // Abre el calendario al clickear
-                  style={{ cursor: 'pointer', width: '130px' }}
-                />
-              </div>
+              <label htmlFor="schedule-date">Fecha</label>
+              <input
+                id="schedule-date"
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                onClick={openDatePicker}
+                aria-label="Seleccionar fecha"
+                className="schedule-date-input"
+              />
             </div>
-            
-            <div className="search-divider"></div>
-            
+
+            <div className="search-divider" />
+
             <div className="search-field">
-              <label>Hora</label>
-              <select 
-                value={selectedTime} 
+              <label htmlFor="schedule-time">Hora</label>
+              <select
+                id="schedule-time"
+                value={selectedTime}
                 onChange={(e) => setSelectedTime(e.target.value)}
-                style={{ cursor: 'pointer', width: '130px' }}
+                className="schedule-time-select"
               >
                 <option value="10:00 - 11:00">10:00 - 11:00</option>
                 <option value="11:00 - 12:00">11:00 - 12:00</option>
@@ -111,12 +116,12 @@ const CourtSchedule: React.FC = () => {
               </select>
             </div>
 
-            <button className="btn-buscar" onClick={handleBuscar}>
+            <button type="button" className="btn-buscar" onClick={handleBuscar}>
               Buscar
             </button>
           </div>
 
-          {/* Tabla Dinámica de Canchas */}
+          {/* Tabla de disponibilidad */}
           <div className="table-container">
             <table className="courts-table">
               <thead>
@@ -132,13 +137,13 @@ const CourtSchedule: React.FC = () => {
                     <td>{court.name}</td>
                     <td>{court.time}</td>
                     <td>
-                      <button 
-                        className={`status-badge ${court.status === 'Ocupada' ? 'badge-ocupada' : 'badge-reservar'}`}
-                        onClick={() => {
-                          if (court.status === 'Reservar') {
-                            alert(`Has seleccionado la ${court.name} para las ${court.time} del día ${selectedDate}`);
-                          }
-                        }}
+                      <button
+                        type="button"
+                        className={`status-badge ${
+                          court.status === 'Ocupada' ? 'badge-ocupada' : 'badge-reservar'
+                        }`}
+                        disabled={court.status === 'Ocupada'}
+                        onClick={() => handleReservar(court)}
                       >
                         {court.status}
                       </button>
@@ -148,15 +153,16 @@ const CourtSchedule: React.FC = () => {
               </tbody>
             </table>
           </div>
-
         </div>
 
-        <img 
-          src={mascotImage} 
-          alt="Mascota del Deporte" 
-          className="sport-mascot" 
-        />
-
+        {/* Mascota deportiva: ¡Código mucho más limpio sin estilos en línea! */}
+        <div className={`sport-mascot-container mascot-${sportId}`}>
+          <img
+            src={mascotImage}
+            alt="Mascota del deporte"
+            className="sport-mascot"
+          />
+        </div>
       </IonContent>
     </IonPage>
   );

@@ -1,0 +1,32 @@
+
+/* =========================================================
+   FONDO GLOBAL DE FALTAUNO
+   ========================================================= */
+
+html,
+body,
+#root,
+ion-app {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+/* Fondo común para la aplicación */
+ion-app {
+  background-image: url('/FondoMenuPrincipal.png');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Evita que las páginas cubran el fondo */
+ion-page {
+  background: transparent;
+}
+
+/* Fondo transparente del contenido Ionic */
+ion-content {
+  --background: transparent;
+}

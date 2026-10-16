@@ -1,17 +1,53 @@
 /* =========================================================
+   VARIABLES GLOBALES
+   ========================================================= */
+:root {
+  --fu-primary: #2563eb;
+  --fu-primary-dark: #1d4ed8;
+  --fu-text-dark: #1a3644;
+  --fu-glass-header: rgba(215, 220, 228, 0.35);
+  --fu-glass-sidebar: rgba(215, 220, 228, 0.96);
+}
+
+/* =========================================================
+   BOTONES REUTILIZABLES (sin cambiar el TSX)
+   ========================================================= */
+
+/* Botones azules tipo píldora */
+.btn-modal-login,
+.sidebar-btn-logout,
+.btn-header-register {
+  background: var(--fu-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Botones de texto / icono sin fondo */
+.btn-modal-cancel,
+.btn-header-login,
+.btn-hamburger {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* =========================================================
    BARRA SUPERIOR Y LOGO
    ========================================================= */
-.header-custom-grande, 
+.header-custom-grande,
 .header-custom-grande ion-toolbar.translucent-toolbar {
-  --background: rgba(215, 220, 228, 0.35) !important;
-  background: rgba(215, 220, 228, 0.35) !important;
+  --background: var(--fu-glass-header) !important;
+  background: var(--fu-glass-header) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: none;
   height: 55px !important;
   min-height: 55px !important;
   position: relative !important;
-  overflow: visible !important; 
+  overflow: visible !important;
 }
 
 .toolbar-logo-container {
@@ -27,7 +63,7 @@
 }
 
 .toolbar-logo-img {
-  height: 150px !important; 
+  height: 150px !important;
   max-height: none !important;
   width: auto !important;
   object-fit: contain;
@@ -35,35 +71,47 @@
 }
 
 /* =========================================================
-   SECCIÓN DE SALUDO 
+   SECCIÓN DE SALUDO
    ========================================================= */
 .welcome-section {
   text-align: center;
-  background: transparent !important;
-  border: none !important;
-  backdrop-filter: none !important;
-  box-shadow: none !important;
-  padding: 10px 20px 25px;
-  margin-bottom: 0;
+  background: rgba(10, 25, 45, 0.72);
+  border: 1px solid rgba(210, 230, 255, 0.55);
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+
+  width: calc(100% - 48px);
+  max-width: 1115px;
+  box-sizing: border-box;
+  margin: 30px auto 55px;
+  padding: 32px 28px;
+
+  position: relative;
+  z-index: 1;
 }
 
 .welcome-section h2 {
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-weight: 500;
-  font-size: 2.2rem;
-  color: #1f4860;
-  margin-bottom: 5px;
-  text-shadow: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.2rem, 5vw, 5rem);
+  color: #ffffff;
+  margin: 0 0 12px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .welcome-section p {
-  color: #2c3e50;
-  font-weight: 500;
-  text-shadow: none;
+  color: #f8fafc;
+  font-size: clamp(1rem, 2vw, 1.8rem);
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.5;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 /* =========================================================
-   GRILLA DE CANCHAS 
+   GRILLA DE CANCHAS
    ========================================================= */
 .categories-grid {
   display: grid;
@@ -71,19 +119,6 @@
   gap: 28px 34px;
   justify-content: center;
   padding-bottom: 40px;
-}
-
-@media (max-width: 1100px) {
-  .categories-grid {
-    grid-template-columns: repeat(2, 240px);
-  }
-}
-
-@media (max-width: 560px) {
-  .categories-grid {
-    grid-template-columns: 1fr;
-    padding: 0 20px 40px;
-  }
 }
 
 /* =========================================================
@@ -126,18 +161,13 @@
 
 .card-gradient-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.75) 100%);
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 30%, rgba(0, 0, 0, 0.75) 100%);
 }
 
 .card-header-absolute {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  inset: auto 0 0 0;
   z-index: 2;
   padding: 6px 12px;
 }
@@ -263,23 +293,14 @@
 }
 
 .btn-modal-cancel {
-  background: transparent;
-  border: none;
-  color: #1d4ed8;
+  color: var(--fu-primary-dark);
   font-size: 19px;
   font-weight: 700;
-  cursor: pointer;
 }
 
 .btn-modal-login {
-  background: #2563eb;
-  color: #ffffff;
-  border: none;
-  border-radius: 999px;
   padding: 12px 38px;
   font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
@@ -287,11 +308,8 @@
    BOTÓN HAMBURGUESA
    ========================================================= */
 .btn-hamburger {
-  background: transparent;
-  border: none;
   color: #1f4860;
-  font-size: 38px; /* Tamaño del ícono de 3 barras */
-  cursor: pointer;
+  font-size: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -309,37 +327,37 @@
 .sidebar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 9998;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
 }
 
 .custom-sidebar {
   position: fixed;
   top: 0;
-  right: -320px; 
-  width: 300px;
-  height: 100vh;
-  background: rgba(220, 230, 240, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
-  z-index: 9999;
-  transition: right 0.35s ease-in-out;
-  padding: 90px 24px 40px; 
-  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.25);
-  display: flex;
-  flex-direction: column;
+  left: 0;
+  height: 100%;
+  width: 320px;
+  max-width: 85vw;
+  box-sizing: border-box;
+  padding: 75px 24px 20px;
+  background: var(--fu-glass-sidebar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
 }
 
-/* Clase que activa la animación de entrada */
 .custom-sidebar.open {
-  right: 0;
+  transform: translateX(0);
 }
 
 .sidebar-title {
   font-size: 28px;
   font-weight: 800;
-  color: #1a3644;
+  color: var(--fu-text-dark);
   margin: 0 0 35px 0;
   padding-left: 5px;
   letter-spacing: 0.5px;
@@ -349,7 +367,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  height: 100%;
+  padding-bottom: 20px;
 }
 
 .sidebar-item {
@@ -362,11 +380,11 @@
   padding: 14px 18px;
   font-size: 15px;
   font-weight: 700;
-  color: #1a3644;
+  color: var(--fu-text-dark);
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   text-align: left;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-item:hover {
@@ -396,19 +414,77 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #2563eb;
-  color: #ffffff;
-  border: none;
-  border-radius: 999px;
-  padding: 14px 24px;
+  padding: 12px 20px;
   font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-  margin-top: auto; /* Lo empuja hacia el fondo de la pantalla */
+  margin-top: 8px;
+  flex-shrink: 0;
   transition: background 0.2s;
+  width: 100%;
 }
 
 .sidebar-btn-logout:hover {
-  background: #1d4ed8;
+  background: var(--fu-primary-dark);
+}
+
+/* =========================================================
+   CLASES DEL HEADER Y FONDO (reemplazan inline styles)
+   ========================================================= */
+
+/* Fondo general de la aplicación */
+.content-main-bg {
+  --background: url('/FondoMenuPrincipal.png') center / cover no-repeat fixed;
+}
+
+/* Contenedor de botones de autenticación en el header */
+.header-auth-buttons {
+  margin-right: 16px;
+  gap: 12px;
+}
+
+/* Botón "Iniciar Sesión" del header */
+.btn-header-login {
+  color: #1e4b8f;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Botón "Registrarse" del header */
+.btn-header-register {
+  padding: 6px 16px;
+  font-size: 12px;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+}
+
+/* =========================================================
+   MEDIA QUERIES (agrupadas al final para que ganen en cascada)
+   ========================================================= */
+@media (max-width: 1100px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 240px);
+  }
+}
+
+@media (max-width: 600px) {
+  .welcome-section {
+    width: calc(100% - 32px);
+    margin: 100px auto 70px;
+    padding: 28px 18px;
+    border-radius: 22px;
+  }
+
+  .welcome-section h2 {
+    font-size: 2.1rem;
+  }
+
+  .welcome-section p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+    padding: 0 20px 40px;
+  }
 }
