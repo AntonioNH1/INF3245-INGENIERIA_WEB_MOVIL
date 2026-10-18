@@ -423,7 +423,7 @@ const Profile: React.FC = () => {
           <>
             <h2>Tu historial está vacío</h2>
             <p>Aquí podrás consultar tus reservas anteriores cuando estén disponibles.</p>
-            <button type="button" className="profile-action profile-action-secondary" onClick={() => setFiltroReservas('proximas')}>Ver próximas reservas</button>
+            <button type="button" className="profile-action" onClick={() => setFiltroReservas('proximas')}>Ver próximas reservas</button>
           </>
         )}
       </div>

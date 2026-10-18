@@ -182,11 +182,9 @@
   background: #16a34a;
 }
 
-/* Mascota deportiva: desplazada hacia la derecha */
-/* Mascota deportiva: desplazada hacia la derecha (Actualizado) */
+/* 1. Base compartida para todas las mascotas */
 .sport-mascot-container {
   position: absolute;
-  right: -8%;
   bottom: 100px;
   display: flex;
   justify-content: flex-end;
@@ -194,8 +192,9 @@
   width: 50vw;
   min-width: 450px;
   max-width: 700px;
-  z-index: 5;
+  z-index: 5; /* Sigue detrás de la tabla para no tapar los botones */
   pointer-events: none;
+  /* Quitamos la propiedad 'right' de aquí para dársela a cada uno */
 }
 
 .sport-mascot {
@@ -208,18 +207,37 @@
   filter: drop-shadow(-5px 5px 10px rgba(0, 0, 0, 0.3));
 }
 
-/* Pantallas pequeñas */
+/* 2. Ajustes INDIVIDUALES usando tus clases dinámicas */
+
+/* Voley y Ping Pong quedan bien pegados al borde */
+.mascot-voley,
+.mascot-pingpong,
+.mascot-tenis,
+.mascot-bask {
+  right: 3%;
+}
+
+.mascot-futbol-7,
+.mascot-futbol-11,
+.mascot-padel {
+  right: -8%; /* Ajusta este número probando en el navegador */
+}
+
+
+/* 3. Pantallas pequeñas (Móviles) */
 @media (max-width: 768px) {
-  /* ... (mantén lo que ya tenías aquí para el resto) ... */
-  
   .sport-mascot-container {
-    right: -3%;
     width: 190px;
     max-width: 42vw;
-    bottom: 0; /* Ajuste para móvil si es necesario */
+    bottom: 0; 
   }
 
   .sport-mascot {
     max-height: 42vh;
   }
+
+  /* Si en celular también varían mucho, puedes reajustarlos aquí adentro */
+  .mascot-voley, .mascot-pingpong { right: 0; }
+  .mascot-futbol-11 { right: -5%; } /* Un ajuste menor para celular */
+
 }

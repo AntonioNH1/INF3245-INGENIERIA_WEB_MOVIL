@@ -91,7 +91,7 @@ const Login: React.FC = () => {
               label="Correo electrónico"
               labelPlacement="floating"
               value={userEmail}
-              onIonChange={(e) =>
+              onIonInput={(e) =>
                 setUserEmail(e.detail.value ?? '')
               }
               autocomplete="email"
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
                 label="Contraseña"
                 labelPlacement="floating"
                 value={userPassword}
-                onIonChange={(e) =>
+                onIonInput={(e) =>
                   setUserPassword(e.detail.value ?? '')
                 }
                 autocomplete="current-password"
