@@ -1,0 +1,298 @@
+/* =========================================================
+   FONDO DEL REGISTRO
+   ========================================================= */
+.register-content {
+  --background: url('/FondoMenuPrincipal.jpg') no-repeat center center / cover !important;
+}
+
+.register-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(10, 15, 28, 0.45) 0%, rgba(10, 15, 28, 0.85) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* =========================================================
+   ESTRUCTURA PRINCIPAL
+   ========================================================= */
+.register-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+.register-glass-box {
+  background: rgba(242, 246, 252, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid #ffffff;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 520px;
+  padding: 32px 36px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+.register-header {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.register-logo {
+  height: 85px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 10px;
+  mix-blend-mode: multiply;
+}
+
+.register-header h2 {
+  color: #0f172a;
+  font-size: 25px;
+  font-weight: 900;
+  margin: 0 0 4px 0;
+}
+
+.register-header p {
+  color: #334155;
+  font-size: 14.5px;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* =========================================================
+   ALERTAS
+   ========================================================= */
+.register-alert {
+  padding: 12px 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.register-alert.error {
+  background: #fee2e2;
+  border: 1px solid #f87171;
+  color: #b91c1c;
+}
+
+.register-alert.success {
+  background: #dcfce7;
+  border: 1px solid #4ade80;
+  color: #15803d;
+}
+
+.register-alert ion-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   FORMULARIO DE ALTO CONTRASTE
+   ========================================================= */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reg-label {
+  color: #0f172a !important;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 4px;
+}
+
+.reg-input-wrapper {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0 14px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #94a3b8;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.reg-input-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+.reg-icon {
+  color: #1e3a8a !important;
+  font-size: 19px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.reg-phone-prefix {
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 14.5px;
+  margin-right: 6px;
+  padding-right: 6px;
+  border-right: 1px solid #cbd5e1;
+}
+
+.reg-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a !important;
+}
+
+.reg-input::placeholder {
+  color: #64748b !important;
+  font-weight: 500;
+}
+
+.reg-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.reg-password-wrapper {
+  position: relative;
+  padding-right: 40px;
+}
+
+.reg-btn-eye {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reg-eye-img {
+  width: 24px;
+  height: auto;
+  display: block;
+}
+
+/* =========================================================
+   BOTÓN REGISTRAR Y LINKS INFERIORES
+   ========================================================= */
+.btn-register-submit {
+  width: 100%;
+  height: 50px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15.5px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-register-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.6);
+}
+
+.btn-register-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.register-footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.divider-line {
+  height: 1px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.login-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.login-prompt span {
+  color: #1e293b;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.link-login-btn {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+  border: 1.5px solid rgba(37, 99, 235, 0.4);
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.link-login-btn:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+/* =========================================================
+   RESPONSIVO
+   ========================================================= */
+@media (max-width: 520px) {
+  .register-glass-box {
+    padding: 24px 20px;
+  }
+  .reg-row-split {
+    grid-template-columns: 1fr;
+  }
+}

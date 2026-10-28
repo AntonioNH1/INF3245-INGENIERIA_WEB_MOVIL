@@ -1,0 +1,310 @@
+/* =========================================================
+   FONDO Y CONTENEDOR GENERAL
+   ========================================================= */
+.app-bg {
+  --background: url('/FondoMenuPrincipal.jpg') no-repeat center center / cover !important;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   RECUADRO BLANCO TRANSLÚCIDO UNIFICADO (GLASSMORPHISM)
+   ========================================================= */
+.login-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 32px 28px 28px;
+  background: rgba(242, 246, 252, 0.88);
+  border: 1.5px solid rgba(255, 255, 255, 0.92);
+  border-radius: 28px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  text-align: center;
+}
+
+.login-header {
+  margin-bottom: 0 !important;
+}
+
+.custom-logo {
+  display: block;
+  width: 175px;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 10px;
+  mix-blend-mode: multiply;
+}
+
+.subtitle {
+  color: #334155;
+  margin: 0;
+  font-size: 0.96rem;
+  text-align: center;
+  line-height: 1.45;
+  padding: 0 4px;
+}
+
+.pregunta-destacada {
+  display: inline-block;
+  margin-bottom: 4px;
+  color: #0f172a;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.panel-divider {
+  height: 1px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.1);
+  margin: 20px 0;
+}
+
+/* =========================================================
+   FORMULARIO Y CAMPOS DE ENTRADA
+   ========================================================= */
+.login-form {
+  width: 100%;
+  text-align: left;
+}
+
+.custom-input {
+  --background: #ffffff;
+  --color: #0f172a;
+  --placeholder-color: #64748b;
+  --padding-start: 16px;
+  --border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-input {
+  --padding-end: 52px;
+  margin-bottom: 8px;
+}
+
+/* =========================================================
+   BOTÓN PARA MOSTRAR/OCULTAR CONTRASEÑA
+   ========================================================= */
+.btn-toggle-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-eye-img {
+  width: 28px;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+}
+
+/* =========================================================
+   BOTÓN OLVIDASTE TU CONTRASEÑA E INGRESAR
+   ========================================================= */
+.forgot-password-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: 4px 2px 18px 0;
+}
+
+.forgot-password-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #1d4ed8;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.forgot-password-btn:hover {
+  color: #1e3a8a;
+  text-decoration: underline;
+}
+
+.login-btn {
+  --background: #2563eb;
+  --background-hover: #1d4ed8;
+  --border-radius: 14px;
+  --box-shadow: 0 8px 20px rgba(37, 99, 235, 0.38);
+  margin: 0;
+  height: 50px;
+  font-weight: 800;
+  font-size: 0.98rem;
+  letter-spacing: 0.8px;
+}
+
+/* =========================================================
+   SECCIÓN DE REGISTRO VISIBLE
+   ========================================================= */
+.register-prompt {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.register-prompt p {
+  color: #334155;
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.register-pill-btn {
+  width: 100%;
+  padding: 11px 20px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+  border: 1.5px solid rgba(37, 99, 235, 0.35);
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.register-pill-btn:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+/* =========================================================
+   ALERTAS Y MENSAJES
+   ========================================================= */
+.error-box {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid #fca5a5;
+}
+
+.success-box {
+  background-color: #dcfce7;
+  color: #15803d;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid #86efac;
+}
+
+/* =========================================================
+   MODAL DE RECUPERACIÓN DE CONTRASEÑA
+   ========================================================= */
+.recover-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.recover-modal-box {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(245, 248, 252, 0.96);
+  border: 1px solid #ffffff;
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  text-align: center;
+}
+
+.recover-modal-box h3 {
+  margin: 0 0 8px 0;
+  color: #0f172a;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.recover-subtitle {
+  color: #475569;
+  font-size: 0.9rem;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+.recover-form {
+  text-align: left;
+}
+
+.recover-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-recover-cancel {
+  flex: 1;
+  height: 46px;
+  background: #e2e8f0;
+  color: #334155;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-recover-submit {
+  flex: 1.4;
+  height: 46px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}

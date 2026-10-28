@@ -1,0 +1,496 @@
+/* --- FONDO Y CABECERA --- */
+.pago-content {
+  --background: url('/FondoMenuPrincipal.jpg') no-repeat center center / cover !important;
+}
+
+.pago-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(10, 15, 28, 0.25) 0%, rgba(10, 15, 28, 0.65) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.pago-toolbar {
+  --background: rgba(255, 255, 255, 0.92);
+  --color: #1e3a8a;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.pago-title {
+  font-weight: 800;
+  color: #1e3a8a;
+  font-size: 18px;
+}
+
+.pago-back-btn {
+  color: #1e3a8a;
+  font-weight: 700;
+}
+
+/* --- ESTRUCTURA PRINCIPAL --- */
+.pago-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 30px;
+  max-width: 1120px;
+  margin: 35px auto;
+  padding: 0 24px 40px 24px;
+  align-items: start;
+}
+
+.pago-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* --- TARJETAS ESMERILADAS (GLASSMORPHISM) --- */
+.pago-glass-card {
+  background: rgba(24, 28, 36, 0.86);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.section-header ion-icon {
+  font-size: 24px;
+  color: #60a5fa;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+/* --- RESUMEN DE LA RESERVA --- */
+.summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+}
+
+.summary-label {
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.summary-label ion-icon {
+  color: #60a5fa;
+  font-size: 18px;
+}
+
+.summary-value {
+  color: #ffffff;
+  font-weight: 700;
+  text-align: right;
+}
+
+.summary-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 6px 0;
+}
+
+.summary-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.summary-total-row span:first-child {
+  color: #f8fafc;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.total-amount {
+  color: #4ade80;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+/* --- TARJETA DE CRÉDITO INTERACTIVA --- */
+.credit-card-preview {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #0f172a 100%);
+  border-radius: 20px;
+  padding: 24px 26px;
+  color: #ffffff;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 205px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-chip {
+  width: 46px;
+  height: 34px;
+  background: linear-gradient(135deg, #fde047 0%, #ca8a04 100%);
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.card-brand {
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #e2e8f0;
+}
+
+.card-number-display {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  margin: 22px 0;
+  font-family: 'Courier New', Courier, monospace;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.card-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.meta-label {
+  font-size: 10px;
+  color: #bfdbfe;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.meta-value {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+/* --- FORMULARIO DE TARJETA --- */
+.security-subtitle {
+  color: #cbd5e1;
+  font-size: 13.5px;
+  margin: -8px 0 20px 0;
+  line-height: 1.4;
+}
+
+.pago-error-banner {
+  background: rgba(239, 68, 68, 0.22);
+  border: 1px solid #ef4444;
+  color: #fecaca;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.pago-error-banner ion-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  color: #e2e8f0;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-left: 4px;
+}
+
+.field-input-wrapper {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0 14px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.field-input-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3);
+}
+
+.field-icon {
+  color: #1e4b8f;
+  font-size: 20px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.field-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.field-input::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.form-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.btn-confirmar-pago {
+  width: 100%;
+  height: 52px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15.5px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-confirmar-pago:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.7);
+}
+
+.btn-confirmar-pago:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* --- MODAL DE PAGO EXITOSO --- */
+.success-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 15, 28, 0.78);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.success-modal-box {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 24px;
+  padding: 30px 26px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: modalPop 0.25s ease-out;
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-icon-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 14px auto;
+}
+
+.success-icon-badge ion-icon {
+  font-size: 52px;
+}
+
+.success-modal-box h2 {
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 900;
+  margin: 0 0 6px 0;
+}
+
+.success-subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0 0 20px 0;
+}
+
+.receipt-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.receipt-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  color: #475569;
+}
+
+.receipt-item strong {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.receipt-item.total {
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 10px;
+  margin-top: 4px;
+  font-size: 15px;
+}
+
+.receipt-item.total strong {
+  color: #16a34a;
+  font-size: 17px;
+}
+
+.btn-volver-inicio {
+  width: 100%;
+  height: 48px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-volver-inicio:hover {
+  background: #1d4ed8;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 900px) {
+  .pago-layout {
+    grid-template-columns: 1fr;
+    margin: 20px auto;
+  }
+}
+
+/* =========================================================
+   SELECTOR DE TARJETAS REGISTRADAS
+   ========================================================= */
+.saved-cards-selector {
+  margin-bottom: 18px;
+}
+
+.selector-title {
+  display: block;
+  color: #93c5fd;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.saved-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.saved-card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saved-card-pill.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #60a5fa;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.45);
+}
