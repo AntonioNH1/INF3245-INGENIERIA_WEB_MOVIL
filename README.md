@@ -1,9 +1,9 @@
 # Sistema de Reservas de Canchas Deportivas (Fútbol 7, Tenis y Pádel)
 
 ## Presentado por:
-- **Bruno Medina:** Configuración inicial, ruteo base, documentación y maquetación de vistas de cliente.
-- **Antonio Navarro:** Lógica de componentes, diseño de interfaz y validaciones de formularios.
-- **Annais Legua:** Prototipado en Figma, flujos de navegación y estructuración de la arquitectura de información.
+- **Bruno Medina:** Configuración del servidor backend (Node.js/Express), conexión a PostgreSQL, diseño del modelo relacional (MER) e implementación de la lógica del Modo Administrador.
+- **Antonio Navarro:** Integración del frontend (Ionic/React) con la API REST, consumo de endpoints (fetch/Axios), manejo de tokens JWT en el almacenamiento local y validaciones de seguridad.
+- **Annais Legua:** Implementación de rutas protegidas en el frontend, gestión del estado de la sesión, redacción del script de base de datos (`init.sql`) y pruebas funcionales en Postman.
 
 ---
 
@@ -14,6 +14,7 @@
 4. [Arquitectura de Navegación y UX](#arquitectura-de-navegación-y-ux)
 5. [Nuestros diseños en Figma](#nuestros-diseños-en-figma)
 6. [Instrucciones de Instalación y Ejecución](#instrucciones-de-instalación-y-ejecución)
+7. [Modelo Relacional de la Base de Datos](#modelo-relacional-de-la-base-de-datos)
 
 ---
 
@@ -110,6 +111,13 @@ La arquitectura se diseñó buscando **escalabilidad** y **eficiencia**. Al sepa
 
 ---
 
+### Modelo Relacional de la Base de Datos
+
+A continuación se presenta el Modelo Entidad-Relación (MER) diseñado para el sistema de reservas de canchas "FaltaUno", detallando las entidades principales, sus atributos, claves primarias (PK) y claves foráneas (FK):
+
+![Diagrama MER FaltaUno](https://drive.google.com/file/d/14gN8zqkl4L9TV4xGU_zPztmqwe-raloq/view?usp=sharing)
+
+---
 ## Instrucciones de Instalación y Ejecución (Monorepo)
 
 Este proyecto está dividido en dos ecosistemas: Frontend (Cliente) y Backend (Servidor).
@@ -118,12 +126,29 @@ Este proyecto está dividido en dos ecosistemas: Frontend (Cliente) y Backend (S
 - Node.js (LTS recomendado).
 - PostgreSQL instalado (para el backend).
 
-### 1. Levantar el Backend (API REST)
+### 1. Configurar la Base de Datos
+1. Abre tu gestor de base de datos PostgreSQL (ej. pgAdmin).
+2. Crea una base de datos vacía (idealmente llamada `reservas_canchas`).
+3. Abre y ejecuta el archivo `init.sql` (ubicado dentro de la carpeta `backend`) para crear las tablas y los datos de prueba.
+
+### 2. Levantar el Backend (API REST)
 1. Abrir terminal y navegar: `cd backend`
 2. Instalar dependencias: `npm install`
-3. Ejecutar el servidor: `node index.js`
+3. **Paso crítico (Variables de Entorno):** Crea un archivo llamado exactamente `.env` en la raíz de la carpeta `backend` e ingresa tu contraseña local de PostgreSQL (en tu_contrasena_de_pgadmin). El formato debe ser el siguiente:
+    ```env
+    PORT=3000
+    DB_USER=postgres
+    DB_PASSWORD=tu_contrasena_de_pgadmin
+    DB_HOST=localhost
+    DB_PORT=5432
+    DB_NAME=reservas_canchas
+    JWT_SECRET=tu_secreto_para_tokens
+    ```
+4. Ejecutar el servidor: `node index.js`
 
-### 2. Levantar el Frontend (Ionic/React)
+### 3. Levantar el Frontend (Ionic/React)
 1. Abrir **otra** terminal y navegar: `cd frontend`
 2. Instalar dependencias: `npm install`
 3. Levantar servidor local: `ionic serve`
+
+---
