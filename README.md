@@ -115,7 +115,8 @@ La arquitectura se diseñó buscando **escalabilidad** y **eficiencia**. Al sepa
 
 A continuación se presenta el Modelo Entidad-Relación (MER) diseñado para el sistema de reservas de canchas "FaltaUno", detallando las entidades principales, sus atributos, claves primarias (PK) y claves foráneas (FK):
 
-![Diagrama MER FaltaUno](https://drive.google.com/file/d/14gN8zqkl4L9TV4xGU_zPztmqwe-raloq/view?usp=sharing)
+<img width="5664" height="2547" alt="erdplus" src="https://github.com/user-attachments/assets/ad64658f-83c0-48d6-96c9-d6fd82d15182" />
+
 
 ---
 ## Instrucciones de Instalación y Ejecución (Monorepo)
