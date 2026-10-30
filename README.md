@@ -13,9 +13,8 @@
 3. [Requerimientos del Sistema](#requerimientos-del-sistema)
 4. [Arquitectura de Navegación y UX](#arquitectura-de-navegación-y-ux)
 5. [Nuestros diseños en Figma](#nuestros-diseños-en-figma)
-6. [Instrucciones de Instalación y Ejecución](#instrucciones-de-instalación-y-ejecución)
-7. [Modelo Relacional de la Base de Datos](#modelo-relacional-de-la-base-de-datos)
-
+6. [Modelo Relacional de la Base de Datos](#modelo-relacional-de-la-base-de-datos)
+7. [Instrucciones de Instalación y Ejecución](#instrucciones-de-instalación-y-ejecución)
 ---
 
 ## De qué trata el problema
