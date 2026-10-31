@@ -396,6 +396,50 @@ router.get('/disponibilidad', async (req, res) => {
 });
 
 /* =========================================================
+   GET: BUSCAR CANCHAS DISPONIBLES
+   Ejemplo: /api/reservas/buscar-disponibles?deporte=Fútbol 11&fecha=2026-10-31&hora_inicio=18:00
+   ========================================================= */
+
+router.get('/buscar-disponibles', async (req, res) => {
+    const { deporte, fecha, hora_inicio } = req.query;
+
+    if (!deporte || !esFechaValida(fecha) || !esHoraValida(hora_inicio)) {
+        return res.status(400).json({
+            mensaje: 'Faltan parámetros de búsqueda válidos.'
+        });
+    }
+
+    try {
+        const resultado = await pool.query(`
+            SELECT c.id, c.nombre, c.tipo_deporte, c.precio_hora
+            FROM Canchas c
+            WHERE c.disponible = TRUE
+              AND LOWER(TRIM(c.tipo_deporte)) = LOWER(TRIM($1))
+              AND c.id NOT IN (
+                  SELECT cancha_id
+                  FROM Reservas
+                  WHERE fecha_reserva = $2::date
+                    AND hora_inicio = $3::time
+                    AND LOWER(TRIM(COALESCE(estado, ''))) = ANY($4::text[])
+              )
+        `, [
+            deporte,
+            fecha,
+            hora_inicio,
+            ESTADOS_QUE_OCUPAN_HORARIO
+        ]);
+
+        return res.json(resultado.rows);
+
+    } catch (error) {
+        console.error('Error al buscar canchas disponibles:', error);
+        return res.status(500).json({
+            mensaje: 'Error interno al buscar canchas.'
+        });
+    }
+});
+
+/* =========================================================
    GET: OBTENER RESERVAS DEL USUARIO LOGUEADO
    ========================================================= */
 
