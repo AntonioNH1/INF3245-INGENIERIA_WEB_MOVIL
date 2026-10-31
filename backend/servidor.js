@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -7,18 +8,24 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares
-app.use(cors()); // Permite peticiones desde el frontend en Ionic
-app.use(express.json()); // Permite recibir y leer datos en formato JSON
+app.use(cors());
+app.use(express.json());
 
-
+// Rutas de usuarios
 const rutasUsuarios = require('./routes/usuarios');
 app.use('/api/usuarios', rutasUsuarios);
 
+// Rutas de canchas
 const rutasCanchas = require('./routes/canchas');
 app.use('/api/canchas', rutasCanchas);
 
+// Rutas de reservas
 const rutasReservas = require('./routes/reservas');
 app.use('/api/reservas', rutasReservas);
+
+// Rutas de métodos de pago
+const rutasMetodosPago = require('./routes/metodosPago');
+app.use('/api/metodos-pago', rutasMetodosPago);
 
 app.get('/', (req, res) => {
     res.json({ mensaje: '¡Servidor de FaltaUno funcionando!' });

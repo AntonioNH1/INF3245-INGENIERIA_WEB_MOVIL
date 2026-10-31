@@ -1,4 +1,8 @@
-/* --- FONDO Y CABECERA --- */
+
+/* =====================================================
+   FONDO Y CABECERA
+   ===================================================== */
+
 .schedule-content {
   --background: url('/FondoMenuPrincipal.jpg') no-repeat center center / cover !important;
 }
@@ -9,7 +13,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.45) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
   z-index: 0;
   pointer-events: none;
 }
@@ -32,7 +40,10 @@
   font-weight: 700;
 }
 
-/* --- ESTRUCTURA PRINCIPAL --- */
+/* =====================================================
+   ESTRUCTURA PRINCIPAL
+   ===================================================== */
+
 .schedule-layout {
   position: relative;
   z-index: 1;
@@ -58,7 +69,10 @@
   z-index: 2;
 }
 
-/* --- CAJA DE BÚSQUEDA Y FILTROS --- */
+/* =====================================================
+   CAJA DE BÚSQUEDA Y FILTROS
+   ===================================================== */
+
 .schedule-search-box {
   background: rgba(28, 30, 36, 0.84);
   backdrop-filter: blur(14px);
@@ -155,7 +169,11 @@
 
 .btn-buscar-horarios {
   width: 100%;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: linear-gradient(
+    135deg,
+    #2563eb 0%,
+    #1d4ed8 100%
+  );
   color: #ffffff;
   border: none;
   padding: 13px;
@@ -175,7 +193,10 @@
   box-shadow: 0 8px 22px rgba(37, 99, 235, 0.65);
 }
 
-/* --- RESUMEN Y LISTA DE CANCHAS --- */
+/* =====================================================
+   RESUMEN Y LISTA DE CANCHAS
+   ===================================================== */
+
 .results-summary {
   display: flex;
   justify-content: space-between;
@@ -216,7 +237,10 @@
   border-radius: 10px;
 }
 
-/* --- TARJETAS DE HORARIOS --- */
+/* =====================================================
+   TARJETAS DE HORARIOS
+   ===================================================== */
+
 .court-card-box {
   background: rgba(28, 30, 36, 0.86);
   backdrop-filter: blur(14px);
@@ -343,51 +367,96 @@
   cursor: not-allowed;
 }
 
-/* --- MASCOTA DEL DEPORTE --- */
+/* =====================================================
+   MASCOTAS DEPORTIVAS
+   ===================================================== */
+
 .schedule-right-panel {
   flex: 1;
+  min-width: 0;
+  min-height: 600px;
+
   display: flex;
   justify-content: center;
   align-items: flex-end;
+
   position: relative;
-  min-height: 600px;
+  padding: 0 10px 28px;
+
+  box-sizing: border-box;
   pointer-events: none;
 }
 
 .mascot-wrapper {
   width: 100%;
   height: 100%;
+  min-height: 600px;
+
   display: flex;
   justify-content: center;
   align-items: flex-end;
 }
 
 .mascot-img {
-  width: 100%;
-  max-width: 650px;
-  height: auto;
-  max-height: 82vh;
+  display: block;
+
+  /* Tamaño general */
+  width: auto;
+  height: min(72vh, 590px);
+
+  max-width: 100%;
+  max-height: calc(100vh - 105px);
+
+  /* Evitar deformación y recortes */
   object-fit: contain;
-  transform-origin: bottom center;
-  filter: drop-shadow(0px 15px 30px rgba(0, 0, 0, 0.75));
+  object-position: center bottom;
+
+  /* Posición y escala para computador */
+  transform: translateY(
+    var(--mascot-offset-y, -18px)
+  ) scale(var(--mascot-scale, 1));
+
+  transform-origin: center bottom;
+
+  /* Efectos visuales */
+  filter: drop-shadow(
+    0px 15px 30px rgba(0, 0, 0, 0.65)
+  );
+
   transition: transform 0.25s ease;
 }
+
+/* =====================================================
+   AJUSTES DE MASCOTAS POR TAMAÑO DE IMAGEN
+   ===================================================== */
+
+/* GRUPO A: personaje pequeño dentro de la imagen */
 
 .img-futbol-7,
 .img-futbol-11,
 .img-padel {
-  transform: scale(1.35) translate(0%, 5%);
+  --mascot-scale: 1.60;
+  --mascot-offset-y: -90px;
+  --mascot-offset-mobile: -85px;
 }
 
+/* GRUPO B: personaje grande dentro de la imagen */
+
+.img-voley,
 .img-tenis,
 .img-pingpong,
-.img-voley,
 .img-bask {
-  transform: scale(1) translate(0%, 0%);
+  --mascot-scale: 1.10;
+  --mascot-offset-y: -90px;
+  --mascot-offset-mobile: -65px;
 }
 
-/* --- DISEÑO RESPONSIVO --- */
+/* =====================================================
+   DISEÑO RESPONSIVO: TABLETS
+   ===================================================== */
+
 @media (max-width: 1100px) {
+
   .filters-grid {
     grid-template-columns: 1fr;
   }
@@ -408,12 +477,79 @@
   }
 
   .schedule-right-panel {
-    min-height: 420px;
+    width: 100%;
+    flex: 0 0 auto;
+    min-height: 440px;
     justify-content: center;
+    padding-bottom: 12px;
+  }
+
+  .mascot-wrapper {
+    height: 420px;
+    min-height: 420px;
   }
 
   .mascot-img {
-    height: 420px;
-    transform: scale(1) translate(0, 0) !important;
+    width: auto;
+    height: min(420px, 48vh);
+    max-height: 420px;
+    max-width: 100%;
+
+    /* Respetar el ajuste vertical de cada deporte */
+    transform: translateY(
+      var(--mascot-offset-mobile, -8px)
+    ) scale(var(--mascot-scale, 1));
+  }
+}
+
+/* =====================================================
+   DISEÑO RESPONSIVO: CELULARES
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+  .schedule-layout {
+    padding: 12px;
+    gap: 15px;
+  }
+
+  .schedule-search-box {
+    padding: 18px 15px;
+  }
+
+  .schedule-search-box h2 {
+    font-size: 23px;
+  }
+
+  .schedule-right-panel {
+    width: 100%;
+    min-height: 360px;
+    padding-bottom: 8px;
+  }
+
+  .mascot-wrapper {
+    width: 100%;
+    height: 350px;
+    min-height: 350px;
+  }
+
+  .mascot-img {
+    display: block;
+
+    width: auto;
+    height: min(340px, 46vh);
+
+    max-width: 100%;
+    max-height: 340px;
+
+    object-fit: contain;
+    object-position: center bottom;
+
+    /* Respetar el ajuste individual en celulares */
+    transform: translateY(
+      var(--mascot-offset-mobile, -5px)
+    ) scale(var(--mascot-scale, 1));
+
+    transform-origin: center bottom;
   }
 }

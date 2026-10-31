@@ -60,10 +60,19 @@ const Login: React.FC = () => {
         localStorage.setItem('userPhone', data.usuario.telefono || localStorage.getItem('userPhone') || '');  
         
         localStorage.setItem('userRol', data.usuario.rol);
-        localStorage.setItem('userId', data.usuario.id.toString());
-        localStorage.setItem('user_logged_in', 'true');
+localStorage.setItem('userId', data.usuario.id.toString());
+localStorage.setItem('user_logged_in', 'true');
 
-        router.push('/cliente/inicio', 'root');
+// Redirigir según el rol del usuario
+const rol = String(data.usuario.rol || '')
+  .trim()
+  .toLowerCase();
+
+if (rol === 'admin' || rol === 'administrador') {
+  router.push('/admin/calendario', 'root');
+} else {
+  router.push('/cliente/inicio', 'root');
+}
       } else {
         setErrorMsg(data.mensaje || 'Correo o contraseña incorrectos');
       }

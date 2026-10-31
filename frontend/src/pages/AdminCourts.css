@@ -1,0 +1,589 @@
+/* PÁGINA GENERAL */
+.admin-courts-page {
+  --background: #101827;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.admin-courts-header {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+
+.admin-courts-toolbar {
+  --background: rgba(255, 255, 255, 0.94);
+  --color: #1e3a8a;
+  --min-height: 72px;
+  backdrop-filter: blur(16px);
+  padding: 0 18px;
+}
+
+.admin-courts-toolbar-title {
+  color: #1e3a8a;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.admin-courts-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  color: #1e3a8a;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.admin-courts-back ion-icon {
+  font-size: 20px;
+}
+
+.admin-courts-content {
+  --background: url('/FondoMenuPrincipal.jpg') no-repeat center center / cover;
+  position: relative;
+}
+
+.admin-courts-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 15, 28, 0.88),
+    rgba(12, 20, 38, 0.94)
+  );
+  pointer-events: none;
+}
+
+.admin-courts-layout {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 38px 0 60px;
+}
+
+/* ENCABEZADO */
+.admin-courts-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
+  color: white;
+}
+
+.admin-courts-eyebrow {
+  color: #93c5fd;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.admin-courts-heading h1 {
+  margin: 10px 0;
+  color: #ffffff;
+  font-size: clamp(27px, 4vw, 36px);
+  font-weight: 800;
+}
+
+.admin-courts-heading p {
+  max-width: 650px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.admin-courts-add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex-shrink: 0;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.admin-courts-add-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4);
+}
+
+.admin-courts-add-button ion-icon {
+  font-size: 19px;
+}
+
+/* ESTADÍSTICAS */
+.admin-courts-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.admin-courts-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 125px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 18px;
+  background: rgba(24, 28, 36, 0.88);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.admin-courts-stat span {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-courts-stat strong {
+  color: white;
+  font-size: 31px;
+  font-weight: 800;
+}
+
+.admin-courts-stat small {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+}
+
+.court-stat-active {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.court-stat-active strong {
+  color: #4ade80;
+}
+
+.court-stat-inactive {
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.court-stat-inactive strong {
+  color: #fb923c;
+}
+
+/* MENSAJES */
+.admin-courts-alert {
+  margin: 18px 0;
+  padding: 14px 17px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.admin-courts-alert.success {
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  background: rgba(22, 101, 52, 0.28);
+  color: #bbf7d0;
+}
+
+.admin-courts-alert.danger {
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  background: rgba(127, 29, 29, 0.28);
+  color: #fecaca;
+}
+
+/* PANELES */
+.admin-courts-form-panel,
+.admin-courts-list-panel {
+  margin-top: 24px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 22px;
+  background: rgba(24, 28, 36, 0.9);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.2);
+}
+
+.admin-courts-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.admin-courts-section-heading h2 {
+  margin: 0 0 7px;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.admin-courts-section-heading p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* FORMULARIO */
+.admin-courts-form-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 18px;
+}
+
+.admin-courts-field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.admin-courts-field label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-courts-field input,
+.admin-courts-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 10px;
+  outline: none;
+  background: rgba(10, 15, 28, 0.72);
+  color: #ffffff;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.admin-courts-field input:focus,
+.admin-courts-field select:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+.admin-courts-field select option {
+  background: #172033;
+  color: white;
+}
+
+.admin-courts-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.admin-courts-cancel-button,
+.admin-courts-save-button {
+  min-height: 42px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-courts-cancel-button {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: white;
+}
+
+.admin-courts-save-button {
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+}
+
+.admin-courts-cancel-button:disabled,
+.admin-courts-save-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* LISTADO */
+.admin-courts-refresh {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  border-radius: 9px;
+  background: rgba(37, 99, 235, 0.13);
+  color: #bfdbfe;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-courts-refresh ion-icon {
+  font-size: 17px;
+}
+
+.admin-courts-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-courts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.admin-court-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 16px;
+  background: rgba(12, 18, 31, 0.72);
+}
+
+.admin-court-card.is-inactive {
+  border-color: rgba(251, 146, 60, 0.28);
+  background: rgba(43, 32, 25, 0.5);
+}
+
+.admin-court-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-court-id {
+  color: #93c5fd;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.admin-court-status {
+  padding: 6px 10px;
+  border-radius: 30px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.admin-court-status.active {
+  background: rgba(34, 197, 94, 0.14);
+  color: #86efac;
+}
+
+.admin-court-status.inactive {
+  background: rgba(251, 146, 60, 0.14);
+  color: #fdba74;
+}
+
+.admin-court-card h3 {
+  margin: 17px 0 5px;
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.admin-court-sport {
+  margin: 0;
+  color: #93c5fd;
+  font-size: 12px;
+}
+
+.admin-court-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 15px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-court-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.admin-court-details span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 10px;
+}
+
+.admin-court-details strong {
+  color: white;
+  font-size: 15px;
+}
+
+.admin-court-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.admin-court-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-court-actions ion-icon {
+  font-size: 15px;
+}
+
+.admin-court-edit {
+  border-color: rgba(96, 165, 250, 0.25) !important;
+  background: rgba(37, 99, 235, 0.18);
+  color: #bfdbfe;
+}
+
+.admin-court-toggle {
+  border-color: rgba(251, 191, 36, 0.25) !important;
+  background: rgba(180, 83, 9, 0.17);
+  color: #fcd34d;
+}
+
+.admin-court-delete {
+  border-color: rgba(248, 113, 113, 0.25) !important;
+  background: rgba(185, 28, 28, 0.17);
+  color: #fca5a5;
+}
+
+.admin-court-delete:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.admin-court-delete-note {
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* ESTADOS DE CARGA Y LISTA VACÍA */
+.admin-courts-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 170px;
+  padding: 25px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.admin-courts-state ion-spinner {
+  color: #60a5fa;
+}
+
+.admin-courts-state h3 {
+  margin: 0 0 8px;
+  color: white;
+  font-size: 16px;
+}
+
+.admin-courts-state p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* RESPONSIVE */
+@media (max-width: 800px) {
+  .admin-courts-layout {
+    width: min(100% - 28px, 650px);
+    padding-top: 27px;
+  }
+
+  .admin-courts-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-courts-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-courts-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-courts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-courts-toolbar {
+    padding: 0 5px;
+  }
+
+  .admin-courts-toolbar-title {
+    font-size: 13px;
+  }
+
+  .admin-courts-back {
+    gap: 5px;
+    padding: 7px 3px;
+    font-size: 10px;
+  }
+
+  .admin-courts-layout {
+    width: calc(100% - 22px);
+  }
+
+  .admin-courts-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .admin-courts-stat {
+    min-height: 105px;
+  }
+
+  .admin-courts-form-panel,
+  .admin-courts-list-panel {
+    padding: 17px;
+    border-radius: 16px;
+  }
+
+  .admin-courts-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-courts-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-courts-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .admin-courts-form-actions button {
+    width: 100%;
+  }
+
+  .admin-court-actions button {
+    flex: 1 1 42%;
+  }
+}
