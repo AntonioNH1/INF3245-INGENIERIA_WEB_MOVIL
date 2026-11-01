@@ -1,0 +1,444 @@
+{
+  "info": {
+    "_postman_id": "08c7287f-3888-4bac-8654-61a4874fd986",
+    "name": "Api FaltaUno",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58468882",
+    "_collection_link": "https://go.postman.co/collection/58468882-08c7287f-3888-4bac-8654-61a4874fd986?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Registro",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"nombre\": \"Estudiante Pruebas\",\r\n    \"rut\": \"12.345.678-9\",\r\n    \"email\": \"estudiante@pucv.cl\",\r\n    \"telefono\": \"+56912345678\",\r\n    \"password\": \"mypassword\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/usuarios/registro",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "usuarios",
+            "registro"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Registro Duplicado",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"nombre\": \"Estudiante Pruebas\",\r\n    \"rut\": \"12.345.678-9\",\r\n    \"email\": \"estudiante@pucv.cl\",\r\n    \"telefono\": \"+56912345678\",\r\n    \"password\": \"mypassword\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/usuarios/registro",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "usuarios",
+            "registro"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login Exitoso",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"estudiante@pucv.cl\",\r\n    \"password\": \"mypassword\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/usuarios/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "usuarios",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener mi Perfil",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/usuarios/yo",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "usuarios",
+            "yo"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener Canchas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/canchas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "canchas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar Disponibilidad Futbol 7",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/reservas/buscar-disponibles?deporte=Fútbol 7&fecha=2026-11-05&hora_inicio=18:00",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "reservas",
+            "buscar-disponibles"
+          ],
+          "query": [
+            {
+              "key": "deporte",
+              "value": "Fútbol 7"
+            },
+            {
+              "key": "fecha",
+              "value": "2026-11-05"
+            },
+            {
+              "key": "hora_inicio",
+              "value": "18:00"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reservar Cancha Exitoso",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"cancha_id\": 329, \r\n    \"fecha_reserva\": \"2026-11-05\",\r\n    \"hora_inicio\": \"18:00\",\r\n    \"hora_fin\": \"19:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/reservas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "reservas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reservar Cancha Fallido",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"cancha_id\": 329, \r\n    \"fecha_reserva\": \"2026-11-05\",\r\n    \"hora_inicio\": \"18:00\",\r\n    \"hora_fin\": \"19:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/reservas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "reservas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener mis Reservas",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/reservas/mis-reservas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "reservas",
+            "mis-reservas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancelar Cancha",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"motivo\": \"Me lesioné el tobillo\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/reservas/mis-reservas/5964/solicitar-cancelacion",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "reservas",
+            "mis-reservas",
+            "5964",
+            "solicitar-cancelacion"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Agregar Tarjeta",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"marca\": \"VISA\",\r\n    \"ultimos_cuatro\": \"3456\",\r\n    \"titular\": \"ESTUDIANTE PRUEBAS\",\r\n    \"vencimiento\": \"12/28\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/metodos-pago",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "metodos-pago"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener Tarjeta",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/metodos-pago",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "metodos-pago"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar Tarjeta",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0wy7}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/metodos-pago/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "metodos-pago",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_0wy7",
+      "secret": true
+    }
+  ]
+}
