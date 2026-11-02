@@ -175,7 +175,8 @@ Este proyecto está dividido en dos ecosistemas: Frontend (Cliente) y Backend (S
 ### 1. Configurar la Base de Datos
 1. Abre tu gestor de base de datos PostgreSQL (ej. pgAdmin).
 2. Crea una base de datos vacía (idealmente llamada `reservas_canchas`).
-3. Abre y ejecuta el archivo `init.sql` (ubicado dentro de la carpeta `backend`) para crear las tablas y los datos de prueba.
+3. Haz click derecho sobre la base de datos `reservas_canchas` y selecciona la opcion `Query tool`
+4. Abre y ejecuta el archivo `init.sql` (ubicado dentro de la carpeta `backend`) para crear las tablas y los datos de prueba.
 
 ### 2. Levantar el Backend (API REST)
 1. Abrir terminal y navegar: `cd backend`
