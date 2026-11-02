@@ -14,7 +14,8 @@
 4. [Arquitectura de Navegación y UX](#arquitectura-de-navegación-y-ux)
 5. [Nuestros diseños en Figma](#nuestros-diseños-en-figma)
 6. [Modelo Relacional de la Base de Datos](#modelo-relacional-de-la-base-de-datos)
-7. [Instrucciones de Instalación y Ejecución](#instrucciones-de-instalación-y-ejecución)
+7. [Pruebas de la API con Postman](#pruebas-de-la-api-con-postman)
+8. [Instrucciones de Instalación y Ejecución](#instrucciones-de-instalación-y-ejecución)
 ---
 
 ## De qué trata el problema
@@ -120,6 +121,46 @@ A continuación se presenta el Modelo Entidad-Relación (MER) diseñado para el 
 
 <img width="5664" height="2547" alt="erdplus" src="https://github.com/user-attachments/assets/ad64658f-83c0-48d6-96c9-d6fd82d15182" />
 
+## INSTRUCCIONES PARA IMPORTAR Y PROBAR LA COLECCIÓN DE POSTMAN
+
+> **Nota:** El archivo `Api FaltaUno.postman_collection.json` necesario para ejecutar estas pruebas se encuentra adjunto directamente en la entrega oficial del Aula Virtual.
+
+### PASO 1: REQUISITOS PREVIOS (LEVANTAR EL SERVIDOR)
+Antes de realizar cualquier prueba en Postman, el servidor backend y la base de datos deben estar funcionando en su máquina local.
+
+1. Abra una terminal en la carpeta raíz del backend.
+2. Ejecute el comando para iniciar el servidor (ej: `npm run dev` o `npm start`).
+3. Asegúrese de que la base de datos PostgreSQL esté activa y que el servidor indique que está escuchando en el puerto 3000.
+
+### PASO 2: IMPORTAR LA COLECCIÓN EN POSTMAN
+1. Abra la aplicación Postman.
+2. En la esquina superior izquierda, haga clic en el botón "Import".
+3. Arrastre y suelte el archivo "Api FaltaUno.postman_collection.json" en la ventana, o haga clic en "Choose Files" para buscarlo.
+4. Haga clic en "Import".
+5. Verá una nueva carpeta llamada "Api FaltaUno" en su panel lateral izquierdo, bajo la sección "Collections".
+
+### PASO 3: REGISTRO Y AUTENTICACIÓN (¡MUY IMPORTANTE!)
+La mayoría de las rutas de esta API están protegidas. Para probarlas, primero debe crear un usuario, iniciar sesión y configurar el Token de acceso. Siga este orden exacto:
+
+1. **EJECUTAR REGISTRO:** Abra la petición "Registro" y presione "Send". Debería recibir un código 201 Created. (Nota: Si ejecuta "Registro Duplicado" a continuación, verá un error 400, validando la seguridad).
+2. **EJECUTAR LOGIN:** Abra la petición "Login Exitoso" y presione "Send". En la respuesta (abajo), verá un código 200 OK y un texto largo llamado "token". Copie ese token completo (sin las comillas).
+3. **CONFIGURAR EL TOKEN:** 
+   * Haga clic en el nombre de la carpeta principal ("Api FaltaUno") en el panel lateral izquierdo.
+   * En la pantalla central, vaya a la pestaña "Variables".
+   * Busque la variable llamada "json_web_token_0wy7".
+   * En las columnas "Initial value" y "Current value", pegue el token que acaba de copiar.
+   * Guarde los cambios presionando el botón "Save" (arriba a la derecha).
+
+Al hacer esto, todas las demás peticiones que requieren autorización tomarán este token automáticamente.
+
+### PASO 4: EJECUTAR EL RESTO DE LAS PRUEBAS
+Ahora puede continuar con el resto de las peticiones en orden:
+
+1. Haga clic en la petición que desea probar (ej. "Obtener Canchas").
+2. Presione "Send".
+3. Revise la sección inferior para ver el código de estado (Ej: 200 OK) y la respuesta del servidor.
+
+* **Nota sobre casos de error:** Las peticiones que terminan en "Duplicado" o "Fallido" (como "Reservar Cancha Fallido") están diseñadas intencionalmente para devolver códigos de error (400 y 409). Esto demuestra el correcto manejo de validaciones y reglas de negocio exigidas en la rúbrica.
 
 ---
 ## Instrucciones de Instalación y Ejecución (Monorepo)
