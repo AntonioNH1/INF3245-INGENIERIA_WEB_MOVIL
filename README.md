@@ -149,7 +149,7 @@ Este proyecto está dividido en dos ecosistemas: Frontend (Cliente) y Backend (S
     DB_NAME=reservas_canchas
     JWT_SECRET=tu_secreto_para_tokens
     ```
-4. Ejecutar el servidor: `node index.js`
+4. Ejecutar el servidor: `npm run dev`
 
 ### 3. Levantar el Frontend (Ionic/React)
 1. Abrir **otra** terminal y navegar: `cd frontend`
