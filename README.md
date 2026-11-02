@@ -29,39 +29,40 @@ Nuestra solución busca democratizar el acceso a un sistema digital mediante una
 
 ## Quiénes usarán la app
 
-### Proto-personas y Supuestos
-*Nota: Los siguientes perfiles fueron construidos en base a entrevistas informales a jugadores frecuentes y administradores locales (evidencia), combinados con supuestos sobre sus hábitos de uso tecnológico.*
+**Proto-personas y Supuestos**
 
-#### 1. El organizador del grupo (Cliente)
-- **Nombre:** Javier.
-- **Nivel tecnológico:** Alto, usuario frecuente de apps móviles.
-- **Necesidad principal:** Encontrar disponibilidad inmediata de canchas y agendar de forma autónoma.
-- **Privacidad y Accesibilidad:** Requiere navegación rápida a una mano (móvil) y que sus datos personales solo sean compartidos con el recinto para la validación de identidad.
-- **Evidencia vs Supuesto:** Se verificó (evidencia) que es el encargado de coordinar en WhatsApp. Se asume (supuesto) que prefiere ver una grilla visual antes que un listado de texto.
+*Nota: Los siguientes perfiles representan a los usuarios objetivos del sistema, alineando sus necesidades con las funcionalidades reales implementadas en la plataforma.*
 
-#### 2. La dueña del recinto (Administrador)
-- **Nombre:** Marcela.
-- **Nivel tecnológico:** Medio-bajo, utiliza el computador del mesón de recepción principalmente para ofimática.
-- **Necesidad principal:** Centralizar las reservas para evitar choques de horario y actualizar su oferta.
-- **Privacidad y Accesibilidad:** Necesita contraste alto en pantalla y tipografía grande, además de accesos restringidos para que sus empleados no puedan borrar canchas.
-- **Evidencia vs Supuesto:** Se verificó que el uso de papel genera reservas dobles. Se asume que prefiere una vista de calendario mensual/diario por sobre una lista de eventos.
+**1. El organizador del grupo (Cliente)**
+* **Nombre:** Javier.
+* **Nivel tecnológico:** Alto, usuario frecuente de aplicaciones web y móviles.
+* **Necesidad principal:** Encontrar disponibilidad inmediata de canchas, agendar de forma autónoma y llevar un registro claro de sus partidos.
+* **Interacción con el sistema (Evidencia):** Navega a través de categorías deportivas mediante tarjetas visuales (Fútbol, Pádel, Tenis, etc.) y utiliza filtros específicos de fecha y hora para encontrar disponibilidad. Gestiona su cuenta administrando datos personales, métodos de pago y revisa su historial para confirmar estados o solicitar la cancelación de un turno.
 
+**2. La dueña del recinto (Administrador)**
+* **Nombre:** Marcela.
+* **Nivel tecnológico:** Medio, utiliza el computador del mesón de recepción para tareas administrativas.
+* **Necesidad principal:** Centralizar la información, evitar choques de horario y gestionar las modificaciones de los clientes rápidamente.
+* **Interacción con el sistema (Evidencia):** Opera desde un panel de control (Dashboard) optimizado para escritorio con alto contraste. Supervisa indicadores en tiempo real mediante tarjetas de métricas (reservas registradas, confirmadas, canceladas y cancelaciones pendientes) y utiliza el buscador de calendario para auditar los turnos de una fecha específica.
 ---
 
 ## Requerimientos del Sistema
 
 ### Requerimientos Funcionales (RF)
+
 | ID | Descripción | Verificabilidad (Resultado esperado) | Rol |
-|---|---|---|---|
-| **RF-01** | El sistema permitirá buscar disponibilidad filtrando por deporte, fecha y rango horario. | Retorna una lista de recintos que coinciden con los parámetros. | Cliente |
-| **RF-02** | El sistema mostrará la grilla de bloques horarios específicos de un recinto seleccionado. | Despliega bloques (ej. 19:00 - 20:30) con su estado (disponible/ocupado). | Cliente |
-| **RF-03** | El sistema permitirá confirmar una reserva en un bloque disponible. | Genera un registro en la base de datos y cambia el estado del bloque a ocupado. | Cliente |
-| **RF-04** | El sistema permitirá visualizar el historial de reservas activas e históricas del usuario. | Renderiza una lista con la fecha, hora y recinto de cada reserva asociada al ID del usuario. | Cliente |
-| **RF-05** | El sistema permitirá cancelar una reserva activa. | Cambia el estado del bloque reservado a "disponible" nuevamente. | Cliente |
-| **RF-06** | El sistema permitirá agregar una nueva cancha al recinto. | Crea un nuevo registro de cancha con su tipo de deporte asociado al ID del recinto. | Admin |
-| **RF-07** | El sistema permitirá fijar o modificar el precio de arriendo de una cancha. | Actualiza el valor monetario asociado a la cancha en la base de datos. | Admin |
-| **RF-08** | El sistema permitirá eliminar una cancha del recinto. | Borra o desactiva la cancha, impidiendo que aparezca en nuevas búsquedas. | Admin |
-| **RF-09** | El sistema mostrará un calendario interactivo con las reservas del día. | Renderiza una vista cronológica agrupando las reservas por cancha. | Admin |
+| :--- | :--- | :--- | :--- |
+| **RF-01** | El sistema permitirá la autenticación de usuarios y validación de roles. | Concede acceso a vistas específicas (Cliente o Administrador) según las credenciales ingresadas. | Ambos |
+| **RF-02** | El sistema permitirá buscar disponibilidad filtrando por deporte, fecha (máx. 1 mes) y rango horario. | Retorna una lista de canchas disponibles que coinciden con los parámetros de búsqueda. | Cliente |
+| **RF-03** | El sistema permitirá confirmar una reserva en un bloque disponible. | Genera un registro en la base de datos y cambia el estado de disponibilidad del bloque horario. | Cliente |
+| **RF-04** | El sistema permitirá visualizar el historial de reservas activas e históricas. | Renderiza una lista con la fecha, hora, estado, precio y cancha asociada al usuario. | Cliente |
+| **RF-05** | El sistema permitirá solicitar la cancelación de una reserva activa. | Cambia el estado de la reserva a "Pendiente de cancelación", requiriendo aprobación del administrador. | Cliente |
+| **RF-06** | El sistema permitirá gestionar datos personales y cambiar contraseñas. | Actualiza la información de contacto o las credenciales de acceso del usuario en la base de datos. | Cliente |
+| **RF-07** | El sistema permitirá agregar tarjetas como métodos de pago. | Registra los datos de la tarjeta asociados a la cuenta del usuario para futuras transacciones. | Cliente |
+| **RF-08** | El sistema mostrará un panel de métricas generales (Dashboard). | Renderiza tarjetas con el total de reservas, confirmadas, canceladas y cancelaciones pendientes. | Admin |
+| **RF-09** | El sistema permitirá buscar y auditar reservas por fecha. | Renderiza una lista detallada de todos los turnos registrados para una fecha seleccionada. | Admin |
+| **RF-10** | El sistema permitirá aprobar o rechazar solicitudes de cancelación. | Cambia el estado de la reserva a "Cancelada" o mantiene la confirmación inicial tras la revisión. | Admin |
+| **RF-11** | El sistema permitirá agregar, modificar o eliminar canchas del recinto. | Actualiza el inventario, precio o estado operativo de las instalaciones en la base de datos. | Admin |
 
 ### Requerimientos No Funcionales (RNF)
 | ID | Atributo | Descripción y Métrica |
@@ -74,35 +75,38 @@ Nuestra solución busca democratizar el acceso a un sistema digital mediante una
 | **RNF-06** | Privacidad | El RUT y teléfono solicitados en el registro se utilizarán exclusivamente para validar la identidad física en el recinto; se prohíbe su exposición en perfiles públicos. |
 
 ---
-
 ## Arquitectura de Navegación y UX
 
 ### Adaptación por Dispositivo
-- **Versión Móvil:** Navegación basada en un *Bottom Tab Bar* (barra inferior) para accesibilidad a una mano, priorizando el buscador y las reservas activas.
-- **Versión Web (Escritorio):** Navegación basada en un *Side Menu* (menú lateral) para aprovechar el ancho de pantalla, ideal para la vista de calendario del administrador.
+* **Versión Web (Enfoque actual):** La interfaz está optimizada actualmente para navegadores de escritorio. Utiliza un menú lateral (Side Menu) para el cliente y un panel de control (Dashboard) expandido para el administrador, aprovechando el ancho de pantalla para gestionar el calendario y las métricas.
+* **Escalabilidad Móvil:** Al estar construido sobre Ionic Framework y React, el proyecto posee la base técnica nativa para adaptarse a pantallas pequeñas y compilarse como aplicación móvil en futuras iteraciones de desarrollo.
 
 ### Rutas y Accesos por Roles
+
 **Rutas Públicas:**
-- `/login` y `/registro`
-- *Comportamiento:* Si el login es exitoso, el sistema valida el rol. Si es Cliente, redirige a `/cliente/inicio`. Si es Admin, redirige a `/admin/calendario`.
+* `/login` y `/registro`.
+* *Comportamiento:* Si la autenticación es exitosa, el sistema decodifica el rol del usuario. Si es Cliente, redirige a `/cliente/inicio`. Si es Admin, redirige a `/admin/calendario`.
 
 **Rutas Protegidas - Cliente:**
-- `/cliente/inicio`: Buscador de recintos.
-- `/cliente/cancha/:id`: Grilla de horarios de un recinto.
-- `/cliente/mis-reservas`: Historial del jugador.
-- *Comportamiento:* Si un Admin intenta entrar, el sistema lo bloquea y redirige a su panel.
+* `/cliente/inicio`: Buscador principal de recintos deportivos por categoría.
+* `/cliente/cancha/:id`: Grilla interactiva de horarios para un recinto específico.
+* `/cliente/perfil`: Centro de gestión del usuario (agrupa las pestañas de Datos Personales, Mis Reservas y Métodos de Pago).
+* *Comportamiento:* Si un Administrador intenta entrar a estas rutas, el sistema lo bloquea y redirige a su panel.
 
 **Rutas Protegidas - Administrador:**
-- `/admin/calendario`: Vista central de reservas.
-- `/admin/canchas`: Gestión de espacios y precios.
-- *Comportamiento:* Si un Cliente intenta entrar, el sistema lo rechaza por falta de permisos.
+* `/admin/calendario`: Dashboard central con métricas y buscador de reservas.
+* `/admin/canchas`: Gestión de espacios, disponibilidad y modificación de precios.
+* *Comportamiento:* Si un Cliente intenta entrar, el sistema lo rechaza inmediatamente por falta de permisos.
 
 **Ruta de Error:**
-- `/*` -> Renderiza una pantalla **404 Not Found** genérica.
+* `/*` -> Renderiza una pantalla genérica de **404 Not Found**.
+
+---
 
 ### Justificación Técnica
-La arquitectura se diseñó buscando **escalabilidad** y **eficiencia**. Al separar los módulos de Cliente y Administrador mediante rutas anidadas y componentes de protección, evitamos cargar código innecesario para el usuario, mejorando el tiempo de respuesta. A nivel de **usabilidad** y **claridad estructural**, esto garantiza que la interfaz no se sature de opciones que el usuario actual no necesita usar, manteniendo flujos de tareas cortos y directos.
+La arquitectura de navegación se diseñó priorizando la **escalabilidad y la eficiencia**. Al separar los módulos de Cliente y Administrador mediante rutas anidadas y componentes de protección, evitamos cargar código innecesario, lo que mejora los tiempos de respuesta del sistema. 
 
+A nivel de **usabilidad y claridad estructural**, esto garantiza que la interfaz gráfica no se sature de opciones irrelevantes para el rol activo, manteniendo flujos de tareas cortos, seguros y directos.
 ---
 
 ## Nuestros diseños en Figma
@@ -125,6 +129,7 @@ Este proyecto está dividido en dos ecosistemas: Frontend (Cliente) y Backend (S
 ### Requisitos previos:
 - Node.js (LTS recomendado).
 - PostgreSQL instalado (para el backend).
+- Instalar la CLI de Ionic (si ya la tiene omita esto).
 
 ### 1. Configurar la Base de Datos
 1. Abre tu gestor de base de datos PostgreSQL (ej. pgAdmin).
@@ -148,7 +153,22 @@ Este proyecto está dividido en dos ecosistemas: Frontend (Cliente) y Backend (S
 
 ### 3. Levantar el Frontend (Ionic/React)
 1. Abrir **otra** terminal y navegar: `cd frontend`
-2. Instalar dependencias: `npm install`
-3. Levantar servidor local: `ionic serve`
+2. Instalar la CLI de Ionic a nivel global (requisito previo): `npm install -g @ionic/cli`
+3. Instalar dependencias: `npm install`
+4. Levantar servidor local: `ionic serve`
+
+### 4. Cuentas de Prueba (Accesos por Rol)
+
+Para facilitar la evaluación del sistema, el script de la base de datos (`init.sql`) genera automáticamente cuentas preconfiguradas. Ingresa las siguientes credenciales en la pantalla de inicio de sesión (`/login`) para probar las distintas interfaces y permisos:
+
+**Modo Administrador (Dueño del recinto):**
+* **Correo:** admin@faltauno.cl
+* **Contraseña:** 123456
+* **Acceso:** Redirige al Dashboard de métricas y calendario (`/admin/calendario`).
+
+**Modo Cliente (Jugador):**
+* **Correo:** jugador@faltauno.cl
+* **Contraseña:** 123456
+* **Acceso:** Redirige al buscador de recintos deportivos (`/cliente/inicio`).
 
 ---
