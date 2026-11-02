@@ -11,6 +11,23 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabla de métodos de pago
+CREATE TABLE IF NOT EXISTS MetodosPago (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL,
+    marca VARCHAR(30) NOT NULL,
+    ultimos_cuatro VARCHAR(4) NOT NULL,
+    titular VARCHAR(100) NOT NULL,
+    vencimiento VARCHAR(5) NOT NULL,
+    fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_metodos_pago_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES Usuarios (id)
+        ON DELETE CASCADE
+);
+
+-- Tabla de canchas
 CREATE TABLE IF NOT EXISTS Canchas (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -19,6 +36,7 @@ CREATE TABLE IF NOT EXISTS Canchas (
     disponible BOOLEAN DEFAULT TRUE
 );
 
+-- Tabla de reservas
 CREATE TABLE IF NOT EXISTS Reservas (
     id SERIAL PRIMARY KEY,
     usuario_id INTEGER NOT NULL,

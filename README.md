@@ -1,53 +1,54 @@
-# Sistema de Reservas de Canchas Deportivas (Fútbol 7, Tenis y Pádel)
+# FaltaUno - Sistema de Reservas de Canchas Deportivas
 
-## Presentado por:
-- **Bruno Medina:** Configuración del servidor backend (Node.js/Express), conexión a PostgreSQL, diseño del modelo relacional (MER) e implementación de la lógica del Modo Administrador.
-- **Antonio Navarro:** Integración del frontend (Ionic/React) con la API REST, consumo de endpoints (fetch/Axios), manejo de tokens JWT en el almacenamiento local y validaciones de seguridad.
-- **Annais Legua:** Implementación de rutas protegidas en el frontend, gestión del estado de la sesión, redacción del script de base de datos (`init.sql`) y pruebas funcionales en Postman.
+## 1. Identificación del Equipo y Responsabilidades
 
----
-
-## Índice
-1. [De qué trata el problema](#de-qué-trata-el-problema)
-2. [Quiénes usarán la app](#quiénes-usarán-la-app)
-3. [Requerimientos del Sistema](#requerimientos-del-sistema)
-4. [Arquitectura de Navegación y UX](#arquitectura-de-navegación-y-ux)
-5. [Nuestros diseños en Figma](#nuestros-diseños-en-figma)
-6. [Modelo Relacional de la Base de Datos](#modelo-relacional-de-la-base-de-datos)
-7. [Pruebas de la API con Postman](#pruebas-de-la-api-con-postman)
-8. [Instrucciones de Instalación y Ejecución](#instrucciones-de-instalación-y-ejecución)
----
-
-## De qué trata el problema
-La gestión de reservas en recintos deportivos de nivel amateur e independiente suele realizarse de manera informal, utilizando cuadernos o planillas de cálculo básicas. Según estimaciones del sector, el auge de deportes como el Pádel y el Fútbol 7 ha generado una sobredemanda de recintos, lo que satura los canales de comunicación tradicionales (WhatsApp, llamadas). Si bien existen soluciones en el mercado como EasyCancha, muchos recintos pequeños no acceden a ellas por costos o complejidad, manteniéndose en la informalidad.
-
-**Consecuencias de no resolver el problema:**
-Si este problema persiste, los recintos continuarán enfrentando pérdidas de ingresos por topes de horarios (doble reserva) y cancelaciones de última hora sin capacidad de reacción. Por el lado del usuario, la fricción de tener que contactar a múltiples recintos genera desorganización, pérdida de tiempo y, a menudo, la disolución del grupo deportivo por no concretar una reserva a tiempo.
-
-Nuestra solución busca democratizar el acceso a un sistema digital mediante una aplicación web y móvil ligera, centrada estrictamente en la visualización de disponibilidad y la reserva rápida.
+- **Bruno Medina:** Configuración de la arquitectura del servidor backend (Node.js/Express), diseño e implementación del modelo relacional en PostgreSQL (MER) y desarrollo de la lógica de administración.
+- **Antonio Navarro:** Integración del frontend (Ionic/React) con la API REST, consumo directo de endpoints en vistas, depuración de errores, validaciones de seguridad en formularios (restricciones de registro y tarjetas) y ejecución de pruebas de integración en Postman.
+- **Annais Legua:** Diseño de la interfaz de usuario (UI/UX) y desarrollo del frontend, incluyendo la vista de Modo Administrador, módulo de métodos de pago, edición de perfil, solicitudes de cancelación de canchas y redacción del script de inicialización de base de datos (`init.sql`).
 
 ---
 
-## Quiénes usarán la app
+## 2. Descripción General del Sistema
 
-**Proto-personas y Supuestos**
+### Problema o Necesidad que Aborda
 
-*Nota: Los siguientes perfiles representan a los usuarios objetivos del sistema, alineando sus necesidades con las funcionalidades reales implementadas en la plataforma.*
+La gestión de reservas en recintos deportivos de nivel amateur (Fútbol 7, Tenis, Pádel) suele realizarse de manera informal mediante cuadernos o mensajería instantánea. Esto genera una sobredemanda mal gestionada, provocando pérdidas de ingresos por topes de horarios (doble reserva) y cancelaciones de última hora. Para el usuario, la fricción de contactar a múltiples recintos genera pérdida de tiempo y dificulta la coordinación de los grupos deportivos.
 
-**1. El organizador del grupo (Cliente)**
-* **Nombre:** Javier.
-* **Nivel tecnológico:** Alto, usuario frecuente de aplicaciones web y móviles.
-* **Necesidad principal:** Encontrar disponibilidad inmediata de canchas, agendar de forma autónoma y llevar un registro claro de sus partidos.
-* **Interacción con el sistema (Evidencia):** Navega a través de categorías deportivas mediante tarjetas visuales (Fútbol, Pádel, Tenis, etc.) y utiliza filtros específicos de fecha y hora para encontrar disponibilidad. Gestiona su cuenta administrando datos personales, métodos de pago y revisa su historial para confirmar estados o solicitar la cancelación de un turno.
+### Objetivos del Proyecto
 
-**2. La dueña del recinto (Administrador)**
-* **Nombre:** Marcela.
-* **Nivel tecnológico:** Medio, utiliza el computador del mesón de recepción para tareas administrativas.
-* **Necesidad principal:** Centralizar la información, evitar choques de horario y gestionar las modificaciones de los clientes rápidamente.
-* **Interacción con el sistema (Evidencia):** Opera desde un panel de control (Dashboard) optimizado para escritorio con alto contraste. Supervisa indicadores en tiempo real mediante tarjetas de métricas (reservas registradas, confirmadas, canceladas y cancelaciones pendientes) y utiliza el buscador de calendario para auditar los turnos de una fecha específica.
+Democratizar el acceso a un sistema digital mediante una aplicación web y móvil para recintos independientes. El sistema está centrado en visualizar la disponibilidad de canchas, permitir el agendamiento autónomo y centralizar la administración del recinto para evitar errores humanos y superposición de horarios.
+
 ---
 
-## Requerimientos del Sistema
+## 3. Caracterización de Usuarios Objetivo
+
+*Nota: Los perfiles construidos a continuación corresponden a una caracterización preliminar basada en fuentes secundarias (entrevistas informales y análisis de soluciones existentes) y supuestos razonados, no a resultados obtenidos de usuarios reales.*
+
+### Proto-Persona 1: Javier (Cliente / Organizador)
+
+- **Tipo de usuario o rol:** Cliente.
+- **Características generales:** 24 años, estudiante universitario o joven profesional, nivel de experiencia tecnológica alto (usuario frecuente de aplicaciones móviles).
+- **Necesidades principales:** Encontrar disponibilidad inmediata de canchas sin depender de respuestas asíncronas por chat o llamadas telefónicas.
+- **Objetivos de uso:** Visualizar las opciones disponibles y concretar una reserva de forma autónoma en minutos.
+- **Dificultades o puntos de frustración:** Perder tiempo consultando disponibilidad, o llegar al recinto y descubrir que la cancha está ocupada por un error administrativo.
+- **Funcionalidades que utilizaría:** Buscador de canchas por fecha y deporte, consulta de horarios, confirmación de reservas, visualización del historial, gestión de métodos de pago y solicitud de cancelaciones.
+- **Dispositivo y contexto probable de acceso:** Teléfono móvil (iOS/Android), uso en movimiento o durante pausas breves.
+- **Supuestos:** Se asume que prefiere interactuar con una interfaz visual de bloques horarios en lugar de extensas listas de texto.
+
+### Proto-Persona 2: Marcela (Administradora del Recinto)
+
+- **Tipo de usuario o rol:** Administrador.
+- **Características generales:** 45 años, dueña o administradora de un recinto deportivo, nivel de experiencia tecnológica medio-bajo (uso principal de ofimática básica).
+- **Necesidades principales:** Centralizar las reservas en una única plataforma automatizada para evitar choques de horario.
+- **Objetivos de uso:** Visualizar rápidamente la ocupación diaria y gestionar la oferta de canchas.
+- **Dificultades o puntos de frustración:** Clientes que no asisten sin cancelar previamente y la superposición de reservas anotadas manualmente por distintos empleados.
+- **Funcionalidades que utilizaría:** Calendario administrativo, consulta de reservas y gestión de canchas.
+- **Dispositivo y contexto probable de acceso:** Computador de escritorio o tablet de uso estático en el mesón de recepción.
+- **Supuestos:** Se asume que requiere interfaces de alto contraste, tipografía legible y navegación simplificada para mitigar errores de entrada de datos.
+
+---
+
+## 4. Requerimientos del Sistema
 
 ### Requerimientos Funcionales (RF)
 
@@ -76,141 +77,390 @@ Nuestra solución busca democratizar el acceso a un sistema digital mediante una
 | **RNF-06** | Privacidad | El RUT y teléfono solicitados en el registro se utilizarán exclusivamente para validar la identidad física en el recinto; se prohíbe su exposición en perfiles públicos. |
 
 ---
-## Arquitectura de Navegación y UX
 
-### Adaptación por Dispositivo
-* **Versión Web (Enfoque actual):** La interfaz está optimizada actualmente para navegadores de escritorio. Utiliza un menú lateral (Side Menu) para el cliente y un panel de control (Dashboard) expandido para el administrador, aprovechando el ancho de pantalla para gestionar el calendario y las métricas.
-* **Escalabilidad Móvil:** Al estar construido sobre Ionic Framework y React, el proyecto posee la base técnica nativa para adaptarse a pantallas pequeñas y compilarse como aplicación móvil en futuras iteraciones de desarrollo.
+## 5. Arquitectura de Navegación y Experiencia de Usuario
 
-### Rutas y Accesos por Roles
+### Relaciones Jerárquicas y Rutas
 
-**Rutas Públicas:**
-* `/login` y `/registro`.
-* *Comportamiento:* Si la autenticación es exitosa, el sistema decodifica el rol del usuario. Si es Cliente, redirige a `/cliente/inicio`. Si es Admin, redirige a `/admin/calendario`.
+La aplicación define las siguientes rutas en el archivo `frontend/src/App.tsx`:
 
-**Rutas Protegidas - Cliente:**
-* `/cliente/inicio`: Buscador principal de recintos deportivos por categoría.
-* `/cliente/cancha/:id`: Grilla interactiva de horarios para un recinto específico.
-* `/cliente/perfil`: Centro de gestión del usuario (agrupa las pestañas de Datos Personales, Mis Reservas y Métodos de Pago).
-* *Comportamiento:* Si un Administrador intenta entrar a estas rutas, el sistema lo bloquea y redirige a su panel.
+- **Rutas públicas:**
+  - `/login` (Inicio de sesión).
+  - `/registro` (Registro de usuarios).
 
-**Rutas Protegidas - Administrador:**
-* `/admin/calendario`: Dashboard central con métricas y buscador de reservas.
-* `/admin/canchas`: Gestión de espacios, disponibilidad y modificación de precios.
-* *Comportamiento:* Si un Cliente intenta entrar, el sistema lo rechaza inmediatamente por falta de permisos.
+- **Rutas correspondientes al Cliente:**
+  - `/cliente/inicio` (Buscador principal de canchas).
+  - `/cliente/perfil` (Perfil del usuario, que reúne datos personales, reservas y métodos de pago).
+  - `/cliente/horarios/:id` (Consulta y selección de horarios de una cancha).
+  - `/cliente/pago/:id` (Proceso de reserva y pago simulado).
 
-**Ruta de Error:**
-* `/*` -> Renderiza una pantalla genérica de **404 Not Found**.
+- **Rutas correspondientes al Administrador:**
+  - `/admin/calendario` (Calendario administrativo).
+  - `/admin/canchas` (Gestión de canchas).
+
+- **Ruta inicial:**
+  - `/` (Redirige a `/cliente/inicio`).
+
+La disponibilidad de las funcionalidades para cada tipo de usuario depende de la autenticación y el rol correspondiente.
+
+### Flujo de Tareas Principales (Task Flow)
+
+- **Task Flow de Reserva (Cliente):** Iniciar sesión → Pantalla de inicio → Seleccionar deporte y fecha → Consultar canchas y horarios disponibles → Seleccionar un bloque horario → Continuar al proceso de pago → Confirmar la reserva.
+
+- **Task Flow de Gestión de Perfil (Cliente):** Iniciar sesión → Ingresar a Mi perfil → Consultar o modificar datos personales → Revisar reservas → Gestionar métodos de pago.
+
+- **Task Flow de Administración:** Iniciar sesión con una cuenta administradora → Ingresar al calendario administrativo → Consultar reservas → Acceder al módulo de gestión de canchas.
+
+### Puntos Críticos de Interacción
+
+1. **Validación de Formularios:** Los formularios de registro y adición de tarjetas cuentan con validaciones para prevenir el ingreso de datos incompletos, inválidos o duplicados.
+2. **Autenticación:** El sistema utiliza tokens JWT para identificar al usuario autenticado en las operaciones que requieren autorización.
+3. **Solicitud de Cancelación:** Se contempla la confirmación de las solicitudes para evitar acciones accidentales.
+4. **Disponibilidad de Horarios:** El backend valida los horarios antes de registrar una reserva para evitar superposiciones.
+
+### Coherencia entre Dispositivos y Justificación Técnica
+
+La arquitectura de la aplicación utiliza React Router, integrado con Ionic, para gestionar la navegación entre las distintas vistas. La interfaz busca mantener una organización visual clara y facilitar el acceso a las funcionalidades correspondientes a clientes y administradores.
 
 ---
 
-### Justificación Técnica
-La arquitectura de navegación se diseñó priorizando la **escalabilidad y la eficiencia**. Al separar los módulos de Cliente y Administrador mediante rutas anidadas y componentes de protección, evitamos cargar código innecesario, lo que mejora los tiempos de respuesta del sistema. 
+## 6. Diseño UI/UX
 
-A nivel de **usabilidad y claridad estructural**, esto garantiza que la interfaz gráfica no se sature de opciones irrelevantes para el rol activo, manteniendo flujos de tareas cortos, seguros y directos.
----
-
-## Nuestros diseños en Figma
-[Ver Prototipo Interactivo en Figma](https://www.figma.com/design/HMk4Bjnwq0eAr6vTQ2NcWn/Sin-t%C3%ADtulo?node-id=0-1&t=9lYpaFwlSHBVut0G-1)
+**[Visualizar Prototipo Interactivo en Figma](https://www.figma.com/design/HMk4Bjnwq0eAr6vTQ2NcWn/Sin-t%C3%ADtulo?node-id=0-1&t=9lYpaFwlSHBVut0G-1)**
 
 ---
 
-### Modelo Relacional de la Base de Datos
+## 7. Modelo Relacional de la Base de Datos
 
-A continuación se presenta el Modelo Entidad-Relación (MER) diseñado para el sistema de reservas de canchas "FaltaUno", detallando las entidades principales, sus atributos, claves primarias (PK) y claves foráneas (FK):
+El sistema utiliza un modelo relacional gestionado a través de PostgreSQL, asegurando la integridad referencial entre las entidades Usuarios, Canchas, Reservas y Métodos de Pago.
 
-<img width="5664" height="2547" alt="erdplus" src="https://github.com/user-attachments/assets/ad64658f-83c0-48d6-96c9-d6fd82d15182" />
+Las entidades principales son:
 
-## INSTRUCCIONES PARA IMPORTAR Y PROBAR LA COLECCIÓN DE POSTMAN
+- **Usuarios:** almacena información personal, credenciales y rol de cada usuario.
+- **Canchas:** almacena el nombre, tipo de deporte, precio por hora y disponibilidad de las canchas.
+- **Reservas:** almacena el usuario asociado, la cancha, fecha, horario, estado y motivo de cancelación.
+- **MetodosPago:** almacena los métodos de pago asociados a cada usuario, incluyendo marca, últimos cuatro dígitos, titular y vencimiento.
 
-> **Nota:** El archivo `Api FaltaUno.postman_collection.json` necesario para ejecutar estas pruebas se encuentra adjunto directamente en la entrega oficial del Aula Virtual.
+![Modelo Relacional](https://github.com/user-attachments/assets/ad64658f-83c0-48d6-96c9-d6fd82d15182)
 
-### PASO 1: REQUISITOS PREVIOS (LEVANTAR EL SERVIDOR)
-Antes de realizar cualquier prueba en Postman, el servidor backend y la base de datos deben estar funcionando en su máquina local.
+---
 
-1. Abra una terminal en la carpeta raíz del backend.
-2. Ejecute el comando para iniciar el servidor (ej: `npm run dev` o `npm start`).
-3. Asegúrese de que la base de datos PostgreSQL esté activa y que el servidor indique que está escuchando en el puerto 3000.
+## 8. Tecnologías y Herramientas Utilizadas
 
-### PASO 2: IMPORTAR LA COLECCIÓN EN POSTMAN
+- **Frontend:** Ionic Framework, React, TypeScript y Vite.
+- **Backend:** Node.js y Express.js.
+- **Autenticación:** JSON Web Tokens (JWT).
+- **Hashing de contraseñas:** BcryptJS.
+- **Base de Datos:** PostgreSQL.
+- **Conexión a la base de datos:** paquete `pg`.
+- **Control de versiones:** Git y GitHub.
+- **Herramientas de pruebas y diseño:** Postman y Figma.
+
+---
+
+## 9. Instrucciones de Instalación, Configuración y Ejecución
+
+El siguiente instructivo detalla el proceso para descargar el código fuente, configurar la base de datos PostgreSQL y ejecutar los componentes Backend y Frontend de FaltaUno en un entorno local.
+
+### Requisitos previos
+
+- Node.js instalado.
+- PostgreSQL instalado y funcionando.
+- pgAdmin para administrar la base de datos.
+- Visual Studio Code u otro editor de código.
+- Postman para realizar las pruebas de la API.
+
+### Paso 1: Obtener el Código Fuente desde GitHub
+
+Puede obtener el proyecto mediante la terminal (Git) o descargándolo directamente desde el navegador.
+
+**Opción A (Mediante Git):**
+
+1. Abra una terminal o consola de comandos.
+2. Ejecute:
+
+   ```bash
+   git clone https://github.com/AntonioNH1/INF3245-INGENIERIA_WEB_MOVIL.git
+   ```
+
+3. Ingrese a la carpeta del proyecto:
+
+   ```bash
+   cd INF3245-INGENIERIA_WEB_MOVIL
+   ```
+
+**Opción B (Descarga directa):**
+
+1. En la página principal del repositorio en GitHub, haga clic en el botón verde **Code**.
+2. Seleccione **Download ZIP**.
+3. Extraiga el archivo comprimido en una ruta accesible de su equipo y abra la carpeta resultante en su editor de código preferido (por ejemplo, Visual Studio Code).
+
+### Paso 2: Configuración de la Base de Datos
+
+1. Inicie el servicio local de PostgreSQL y abra pgAdmin.
+2. En el panel izquierdo, despliegue el servidor PostgreSQL correspondiente.
+3. Haga clic derecho sobre **Databases** y seleccione **Create → Database**.
+4. En el campo **Database**, escriba `faltauno`.
+5. Mantenga como propietario el usuario correspondiente a su instalación de PostgreSQL (por ejemplo, `postgres`).
+6. Presione **Save** para crear la base de datos.
+
+**Ejecución del archivo init.sql:**
+
+1. En pgAdmin, seleccione la base de datos `faltauno`.
+2. Haga clic derecho sobre ella y seleccione **Query Tool**.
+3. En la ventana de consulta, seleccione el botón para abrir un archivo SQL.
+4. Busque el archivo `init.sql`, ubicado dentro de la carpeta `backend` del proyecto.
+5. Abra el archivo y compruebe que la conexión de Query Tool corresponda a la base de datos `faltauno`.
+6. Ejecute el script utilizando el botón de ejecución o la tecla `F5`.
+7. Revise la pestaña **Messages** y compruebe que la consulta termine correctamente.
+
+El archivo `init.sql` contiene instrucciones para crear las tablas e incorporar los datos iniciales de prueba.
+
+**Importante:** El backend no ejecuta automáticamente el archivo `init.sql`. Por lo tanto, este debe ejecutarse manualmente desde pgAdmin antes de iniciar las pruebas de la aplicación.
+
+El script debe incluir la creación de las tablas `Usuarios`, `Canchas`, `Reservas` y `MetodosPago`. La tabla `MetodosPago` debe contener los campos `id`, `usuario_id`, `marca`, `ultimos_cuatro`, `titular`, `vencimiento` y `fecha_registro`, además de su relación con la tabla `Usuarios`.
+
+El archivo debe ejecutarse una sola vez sobre una base de datos nueva. Aunque las instrucciones de creación de tablas utilizan `IF NOT EXISTS`, las inserciones de usuarios, canchas y reservas de prueba no están preparadas para ejecutarse repetidamente sin generar duplicaciones o errores.
+
+### Paso 3: Configuración y Ejecución del Servidor (Backend)
+
+1. Abra una terminal en Visual Studio Code.
+2. Ingrese al directorio del servidor:
+
+   ```bash
+   cd backend
+   ```
+
+3. Instale las dependencias necesarias:
+
+   ```bash
+   npm install
+   ```
+
+4. Cree un archivo denominado `.env` exactamente en la raíz de la carpeta `backend`.
+5. Configure las variables de entorno según los datos de conexión de su instalación de PostgreSQL:
+
+   ```env
+   PORT=3000
+   DB_USER=postgres
+   DB_PASSWORD=SU_CONTRASENA_DE_POSTGRESQL
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=faltauno
+   JWT_SECRET=SU_CLAVE_SECRETA
+   ```
+
+6. Reemplace los valores de ejemplo por sus propias credenciales. El valor de `DB_NAME` debe coincidir con el nombre de la base de datos creada en pgAdmin.
+7. Inicie el servidor ejecutando:
+
+   ```bash
+   npm run dev
+   ```
+
+8. Compruebe que la terminal indique que el servidor está escuchando en el puerto 3000 y que se haya establecido la conexión con PostgreSQL.
+
+La dirección local del backend es:
+
+`http://localhost:3000`
+
+Mantenga esta terminal abierta mientras utilice la aplicación.
+
+**Nota para Windows:** Si PowerShell bloquea la ejecución de `npm` por sus políticas de ejecución, puede utilizar `npm.cmd install` y `npm.cmd run dev`.
+
+### Paso 4: Ejecución de la Aplicación (Frontend)
+
+1. Abra una nueva pestaña o ventana de terminal.
+2. Desde la carpeta principal del proyecto, ingrese al directorio del cliente:
+
+   ```bash
+   cd frontend
+   ```
+
+3. Instale las dependencias:
+
+   ```bash
+   npm install
+   ```
+
+4. Inicie el servidor de desarrollo:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Espere a que Vite indique la dirección local de la aplicación en la terminal.
+6. Abra dicha dirección en el navegador web.
+
+La dirección predeterminada de Vite suele ser:
+
+`http://localhost:5173`
+
+Mantenga abiertas las terminales del backend y del frontend mientras utilice FaltaUno.
+
+### Paso 5: Cuentas de Prueba (Accesos por Rol)
+
+El archivo `init.sql` incorpora usuarios de prueba para facilitar la evaluación de los distintos perfiles del sistema.
+
+**Modo Administrador:**
+
+- **Nombre:** Admin General.
+- **Correo:** `admin@faltauno.cl`
+- **Contraseña:** `123456`
+- **Rol:** `admin`.
+
+**Modo Cliente:**
+
+- **Nombre:** Jugador Estrella.
+- **Correo:** `jugador@faltauno.cl`
+- **Contraseña:** `123456`
+- **Rol:** `cliente`.
+
+Estas cuentas se crean al ejecutar correctamente el script de inicialización.
+
+**Asignación del rol de administrador a otro usuario:**
+
+Si se desea otorgar el rol de administrador a un usuario que ya se encuentra registrado, se puede realizar desde pgAdmin:
+
+1. Seleccione la base de datos `faltauno`.
+2. Abra la herramienta **Query Tool**.
+3. Ejecute la siguiente sentencia SQL, reemplazando el correo electrónico por el del usuario correspondiente:
+
+   ```sql
+   UPDATE Usuarios
+   SET rol = 'admin'
+   WHERE email = 'correo_del_usuario@ejemplo.com';
+   ```
+
+4. Para comprobar el cambio, ejecute:
+
+   ```sql
+   SELECT id, nombre, email, rol
+   FROM Usuarios
+   WHERE email = 'correo_del_usuario@ejemplo.com';
+   ```
+
+5. El usuario debe cerrar sesión y volver a iniciarla para obtener un nuevo token JWT con su rol actualizado.
+
+**Importante:** El usuario debe estar registrado previamente. La sentencia solamente modifica el rol de la cuenta cuyo correo electrónico coincida con el indicado.
+
+Las credenciales de prueba son para fines académicos y no deben utilizarse en un entorno de producción.
+
+### Consideraciones de Seguridad
+
+- El archivo `.env` contiene credenciales privadas y no debe subirse al repositorio de GitHub.
+- Cada integrante debe configurar sus propias credenciales de PostgreSQL.
+- La variable `JWT_SECRET` debe contener una clave secreta propia.
+- No se deben almacenar números completos de tarjetas ni códigos de seguridad CVV en la base de datos.
+- Los métodos de pago almacenan información parcial de las tarjetas.
+- El proceso de pago de la aplicación es una simulación y no realiza cobros reales mediante una pasarela de pago.
+
+---
+
+## 10. Pruebas de la API mediante Postman
+
+Para evaluar el funcionamiento de los endpoints de la API REST de FaltaUno, se proporciona una colección de solicitudes HTTP que permite probar las operaciones del sistema y sus validaciones.
+
+El archivo de la colección se encuentra en la carpeta `backend` con el nombre:
+
+`Api FaltaUno.postman_collection.json`
+
+### Paso 1: Requisitos previos (Levantar el servidor)
+
+Antes de realizar las pruebas, asegúrese de que:
+
+1. PostgreSQL esté funcionando.
+2. La base de datos `faltauno` esté creada y tenga sus tablas inicializadas mediante `init.sql`.
+3. El archivo `.env` esté configurado correctamente.
+4. El servidor backend esté iniciado desde la carpeta `backend` mediante:
+
+   ```bash
+   npm run dev
+   ```
+
+5. El servidor esté disponible en:
+
+   `http://localhost:3000`
+
+Mantenga abierta la terminal del backend durante las pruebas.
+
+### Paso 2: Importar la colección en Postman
+
 1. Abra la aplicación Postman.
-2. En la esquina superior izquierda, haga clic en el botón "Import".
-3. Arrastre y suelte el archivo "Api FaltaUno.postman_collection.json" en la ventana, o haga clic en "Choose Files" para buscarlo.
-4. Haga clic en "Import".
-5. Verá una nueva carpeta llamada "Api FaltaUno" en su panel lateral izquierdo, bajo la sección "Collections".
+2. Seleccione el botón **Import**.
+3. Seleccione la opción **Files** o **Choose Files**.
+4. Busque el archivo `Api FaltaUno.postman_collection.json` dentro de la carpeta `backend`.
+5. Seleccione el archivo y presione **Import**.
+6. Compruebe que aparezca la colección **Api FaltaUno** en el panel lateral, dentro de **Collections**.
+7. Abra la colección para visualizar las solicitudes disponibles.
 
-### PASO 3: REGISTRO Y AUTENTICACIÓN (¡MUY IMPORTANTE!)
-La mayoría de las rutas de esta API están protegidas. Para probarlas, primero debe crear un usuario, iniciar sesión y configurar el Token de acceso. Siga este orden exacto:
+### Paso 3: Registro de usuario
 
-1. **EJECUTAR REGISTRO:** Abra la petición "Registro" y presione "Send". Debería recibir un código 201 Created. (Nota: Si ejecuta "Registro Duplicado" a continuación, verá un error 400, validando la seguridad).
-2. **EJECUTAR LOGIN:** Abra la petición "Login Exitoso" y presione "Send". En la respuesta (abajo), verá un código 200 OK y un texto largo llamado "token". Copie ese token completo (sin las comillas).
-3. **CONFIGURAR EL TOKEN:** 
-   * Haga clic en el nombre de la carpeta principal ("Api FaltaUno") en el panel lateral izquierdo.
-   * En la pantalla central, vaya a la pestaña "Variables".
-   * Busque la variable llamada "json_web_token_0wy7".
-   * En las columnas "Initial value" y "Current value", pegue el token que acaba de copiar.
-   * Guarde los cambios presionando el botón "Save" (arriba a la derecha).
+1. Abra la solicitud denominada **Registro**.
+2. Revise el método HTTP, la URL y los datos del cuerpo de la solicitud (Body).
+3. Presione **Send**.
+4. Compruebe que la respuesta sea `201 Created` si el registro se realizó correctamente.
 
-Al hacer esto, todas las demás peticiones que requieren autorización tomarán este token automáticamente.
+Para probar la validación de registros duplicados, ejecute la solicitud **Registro Duplicado**. La respuesta esperada, según las instrucciones de las pruebas entregadas, es `400 Bad Request`.
 
-### PASO 4: EJECUTAR EL RESTO DE LAS PRUEBAS
-Ahora puede continuar con el resto de las peticiones en orden:
+### Paso 4: Inicio de sesión y obtención del token JWT
 
-1. Haga clic en la petición que desea probar (ej. "Obtener Canchas").
-2. Presione "Send".
-3. Revise la sección inferior para ver el código de estado (Ej: 200 OK) y la respuesta del servidor.
+1. Abra la solicitud **Login Exitoso**.
+2. Presione **Send**.
+3. Compruebe que la respuesta sea `200 OK`.
+4. En el cuerpo de la respuesta, identifique el campo `token`.
+5. Copie el token completo, sin las comillas.
 
-* **Nota sobre casos de error:** Las peticiones que terminan en "Duplicado" o "Fallido" (como "Reservar Cancha Fallido") están diseñadas intencionalmente para devolver códigos de error (400 y 409). Esto demuestra el correcto manejo de validaciones y reglas de negocio exigidas en la rúbrica.
+También se pueden utilizar las cuentas de prueba definidas en `init.sql`:
 
----
-## Instrucciones de Instalación y Ejecución (Monorepo)
+- Administrador: `admin@faltauno.cl` / `123456`.
+- Cliente: `jugador@faltauno.cl` / `123456`.
 
-Este proyecto está dividido en dos ecosistemas: Frontend (Cliente) y Backend (Servidor).
+### Paso 5: Configuración del token de autenticación
 
-### Requisitos previos:
-- Node.js (LTS recomendado).
-- PostgreSQL instalado (para el backend).
-- Instalar la CLI de Ionic (si ya la tiene omita esto).
+Las solicitudes que requieren autenticación necesitan un token JWT válido.
 
-### 1. Configurar la Base de Datos
-1. Abre tu gestor de base de datos PostgreSQL (ej. pgAdmin).
-2. Crea una base de datos vacía (idealmente llamada `reservas_canchas`).
-3. Haz click derecho sobre la base de datos `reservas_canchas` y selecciona la opcion `Query tool`
-4. Abre y ejecuta el archivo `init.sql` (ubicado dentro de la carpeta `backend`) para crear las tablas y los datos de prueba.
+Para configurar el token:
 
-### 2. Levantar el Backend (API REST)
-1. Abrir terminal y navegar: `cd backend`
-2. Instalar dependencias: `npm install`
-3. **Paso crítico (Variables de Entorno):** Crea un archivo llamado exactamente `.env` en la raíz de la carpeta `backend` e ingresa tu contraseña local de PostgreSQL (en tu_contrasena_de_pgadmin). El formato debe ser el siguiente:
-    ```env
-    PORT=3000
-    DB_USER=postgres
-    DB_PASSWORD=tu_contrasena_de_pgadmin
-    DB_HOST=localhost
-    DB_PORT=5432
-    DB_NAME=reservas_canchas
-    JWT_SECRET=tu_secreto_para_tokens
-    ```
-4. Ejecutar el servidor: `npm run dev`
+1. Seleccione la colección **Api FaltaUno** en el panel izquierdo de Postman.
+2. Ingrese a la pestaña **Variables**.
+3. Identifique la variable utilizada por las solicitudes protegidas para almacenar el token.
+4. Pegue el token obtenido durante el inicio de sesión en el valor correspondiente.
+5. Guarde los cambios cuando Postman lo solicite.
 
-### 3. Levantar el Frontend (Ionic/React)
-1. Abrir **otra** terminal y navegar: `cd frontend`
-2. Instalar la CLI de Ionic a nivel global (requisito previo): `npm install -g @ionic/cli`
-3. Instalar dependencias: `npm install`
-4. Levantar servidor local: `ionic serve`
+La guía de pruebas proporcionada por el equipo identifica la variable `json_web_token_0wy7`. Antes de utilizarla, compruebe que ese nombre coincida exactamente con el definido en el archivo JSON de la colección.
 
-### 4. Cuentas de Prueba (Accesos por Rol)
+Una vez configurado correctamente el token, las solicitudes que utilicen esa variable podrán enviar la autenticación correspondiente.
 
-Para facilitar la evaluación del sistema, el script de la base de datos (`init.sql`) genera automáticamente cuentas preconfiguradas. Ingresa las siguientes credenciales en la pantalla de inicio de sesión (`/login`) para probar las distintas interfaces y permisos:
+### Paso 6: Ejecutar el resto de las pruebas
 
-**Modo Administrador (Dueño del recinto):**
-* **Correo:** admin@faltauno.cl
-* **Contraseña:** 123456
-* **Acceso:** Redirige al Dashboard de métricas y calendario (`/admin/calendario`).
+Después de realizar el registro, iniciar sesión y configurar el token, se pueden ejecutar las demás solicitudes de la colección.
 
-**Modo Cliente (Jugador):**
-* **Correo:** jugador@faltauno.cl
-* **Contraseña:** 123456
-* **Acceso:** Redirige al buscador de recintos deportivos (`/cliente/inicio`).
+Para cada prueba:
 
----
+1. Seleccione la solicitud que desea ejecutar, por ejemplo, **Obtener Canchas**.
+2. Revise el método HTTP, la URL y los parámetros correspondientes.
+3. Compruebe los datos enviados en el Body, cuando corresponda.
+4. Presione **Send**.
+5. Revise el código de estado HTTP y la respuesta del servidor.
+
+Las solicitudes disponibles permiten comprobar las distintas operaciones de la API, de acuerdo con los casos de prueba incluidos en la colección.
+
+### Paso 7: Interpretación de los resultados
+
+Los principales códigos de respuesta HTTP que pueden aparecer son:
+
+| Código | Significado |
+|---|---|
+| `200 OK` | La solicitud se procesó correctamente. |
+| `201 Created` | Se creó correctamente un nuevo registro. |
+| `400 Bad Request` | Los datos enviados son inválidos o incumplen alguna validación. |
+| `401 Unauthorized` | No se proporcionó un token válido o falló la autenticación. |
+| `403 Forbidden` | El usuario no tiene autorización para realizar la operación. |
+| `404 Not Found` | No se encontró el recurso solicitado. |
+| `409 Conflict` | Existe un conflicto con alguna regla de negocio, por ejemplo, una superposición de horarios. |
+| `500 Internal Server Error` | Se produjo un error interno en el servidor. |
+
+**Nota sobre las pruebas fallidas:** Las solicitudes identificadas como `Duplicado` o `Fallido` están diseñadas para comprobar las validaciones del backend. Por lo tanto, recibir un código de error puede representar el resultado esperado, siempre que coincida con el escenario definido en la colección.
+
+Se recomienda ejecutar las pruebas de registro y autenticación antes de probar las rutas que requieren autorización.
+
