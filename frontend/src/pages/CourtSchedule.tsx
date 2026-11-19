@@ -29,8 +29,8 @@ import { useParams } from 'react-router-dom';
 import './CourtSchedule.css';
 
 // Direcciones del backend.
-const API_CANCHAS = 'http://localhost:3000/api/canchas';
-const API_RESERVAS = 'http://localhost:3000/api/reservas';
+const API_CANCHAS = 'http://localhost:3000/api/v1/canchas';
+const API_RESERVAS = 'http://localhost:3000/api/v1/reservas';
 
 // --- CONFIGURACIÓN DE MASCOTAS ---
 const SPORT_MASCOTS: Record<string, string> = {
@@ -176,6 +176,8 @@ const horaAMinutos = (hora: string): number => {
   return horas * 60 + minutos;
 };
 
+
+
 // =====================================================
 // GENERAR OPCIONES CON DISPONIBILIDAD REAL
 // =====================================================
@@ -295,11 +297,53 @@ const CourtSchedule: React.FC = () => {
 
   // Disponibilidad obtenida desde PostgreSQL.
   const [resultados, setResultados] = useState<CourtResult[]>([]);
+
+  // Estados para la API de Feriados
+  const [feriados, setFeriados] = useState<{ date: string; title: string }[]>([]);
+  const [feriadoActual, setFeriadoActual] = useState<string | null>(null);
+
   const [cargandoDisponibilidad, setCargandoDisponibilidad] = useState(true);
   const [errorDisponibilidad, setErrorDisponibilidad] = useState('');
 
+  // Estado para la API de Clima
+  const [pronostico, setPronostico] = useState<{ tempMax: number; tempMin: number; codigo: number } | null>(null);
+
   // Fuerza una nueva consulta al volver a esta pantalla.
   const [versionActualizacion, setVersionActualizacion] = useState(0);
+
+  // =====================================================
+  // INTEGRACIÓN API EXTERNA: FERIADOS DE CHILE (EF 5)
+  // =====================================================
+  useEffect(() => {
+    const cargarFeriados = async () => {
+      try {
+        const respuesta = await fetch('https://api.victorsanmartin.com/feriados/en.json');
+        const datos = await respuesta.json();
+        if (datos.status === 'success') {
+          setFeriados(datos.data);
+        }
+      } catch (error) {
+        console.error('Error al cargar la API de Feriados:', error);
+      }
+    };
+    cargarFeriados();
+  }, []);
+
+// Verificar si la fecha seleccionada por el usuario es feriado
+  useEffect(() => {
+    if (!inputFecha || feriados.length === 0) {
+      setFeriadoActual(null);
+      return;
+    }
+    
+    // inputFecha viene como "2026-12-08". Extraemos solo el mes y el día ("-12-08")
+    const mesDiaSeleccionado = inputFecha.substring(4);
+    
+    // Buscamos un feriado de la API que coincida con ese mes y día, ignorando el año
+    const feriado = feriados.find((f) => f.date.endsWith(mesDiaSeleccionado));
+    
+    setFeriadoActual(feriado ? feriado.title : null);
+  }, [inputFecha, feriados]);
 
   // Actualizar canchas y reservas cada vez que se ingresa a la pantalla.
   useIonViewWillEnter(() => {
@@ -328,6 +372,42 @@ const CourtSchedule: React.FC = () => {
     setAppliedSport(deporteInicial);
   }, [id]);
 
+// =====================================================
+  // INTEGRACIÓN API EXTERNA: CLIMA (EF 5)
+  // =====================================================
+  useEffect(() => {
+    const cargarClima = async () => {
+      try {
+        // Coordenadas aproximadas de Valparaíso / Casablanca
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=-33.0456&longitude=-71.6207&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=America%2FSantiago';
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+        
+        if (datos.daily && datos.daily.time) {
+          // Buscamos si la fecha seleccionada está dentro del pronóstico (solo da 7 días)
+          const indiceFecha = datos.daily.time.indexOf(inputFecha);
+          
+          if (indiceFecha !== -1) {
+            setPronostico({
+              tempMax: datos.daily.temperature_2m_max[indiceFecha],
+              tempMin: datos.daily.temperature_2m_min[indiceFecha],
+              codigo: datos.daily.weathercode[indiceFecha] // (0-3: Despejado, 45-48: Niebla, 50+: Lluvia)
+            });
+          } else {
+            setPronostico(null); // Fecha muy lejana para tener pronóstico
+          }
+        }
+      } catch (error) {
+        console.error('Error al cargar el clima:', error);
+      }
+    };
+    
+    if (inputFecha) {
+      cargarClima();
+    }
+  }, [inputFecha]);
+
+
   // =====================================================
   // CARGAR CANCHAS HABILITADAS DESDE POSTGRESQL
   // =====================================================
@@ -345,8 +425,8 @@ const CourtSchedule: React.FC = () => {
         if (!respuesta.ok) {
           const mensaje =
             typeof datos === 'object' &&
-            datos !== null &&
-            'mensaje' in datos
+              datos !== null &&
+              'mensaje' in datos
               ? String((datos as { mensaje: unknown }).mensaje)
               : 'No se pudieron cargar las canchas.';
 
@@ -433,8 +513,8 @@ const CourtSchedule: React.FC = () => {
         const jsonRespuesta: any = await respuesta.json();
 
         if (!respuesta.ok) {
-          const mensaje = jsonRespuesta?.mensaje 
-            ? String(jsonRespuesta.mensaje) 
+          const mensaje = jsonRespuesta?.mensaje
+            ? String(jsonRespuesta.mensaje)
             : 'No se pudo consultar la disponibilidad.';
           throw new Error(mensaje);
         }
@@ -722,7 +802,49 @@ const CourtSchedule: React.FC = () => {
                   </div>
                 </div>
               </div>
-
+              {/* BANNER DE API EXTERNA: FERIADO */}
+              {feriadoActual && (
+                <div style={{
+                  background: 'rgba(245, 158, 11, 0.2)',
+                  border: '1px solid #f59e0b',
+                  color: '#fbbf24',
+                  padding: '12px 15px',
+                  borderRadius: '10px',
+                  marginBottom: '15px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '13px',
+                  fontWeight: '600'
+                }}>
+                  <IonIcon icon={alertCircleOutline} style={{ fontSize: '20px' }} />
+                  <span><strong>¡Atención!</strong> Ese día es feriado: <em>{feriadoActual}</em>. Verifica los precios y disponibilidad.</span>
+                </div>
+              )}
+              {/* BANNER DE API EXTERNA: CLIMA */}
+              {pronostico && (
+                <div style={{
+                  background: 'rgba(59, 130, 246, 0.15)',
+                  border: '1px solid rgba(59, 130, 246, 0.4)',
+                  color: '#60a5fa',
+                  padding: '12px 15px',
+                  borderRadius: '10px',
+                  marginBottom: '15px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '13px',
+                  fontWeight: '600'
+                }}>
+                  <span style={{ fontSize: '22px' }}>
+                    {pronostico.codigo <= 3 ? '☀️' : pronostico.codigo < 50 ? '☁️' : '🌧️'}
+                  </span>
+                  <span>
+                    <strong>Pronóstico Local:</strong> Máx: {pronostico.tempMax}°C | Mín: {pronostico.tempMin}°C.
+                    {pronostico.codigo >= 50 && ' ¡Atención, probabilidad de lluvia!'}
+                  </span>
+                </div>
+              )}
               {/* BOTÓN BUSCAR */}
               <button
                 type="button"

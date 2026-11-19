@@ -29,13 +29,14 @@ import {
 import { useParams, useLocation } from 'react-router-dom';
 import type { SavedCard, UserReservation } from './Profile';
 import './Pagos.css';
+import emailjs from '@emailjs/browser';
 
 /* =========================================================
    CONFIGURACIÓN DE API
    ========================================================= */
-const API_CANCHAS = 'http://localhost:3000/api/canchas';
-const API_RESERVAS = 'http://localhost:3000/api/reservas';
-const API_METODOS_PAGO = 'http://localhost:3000/api/metodos-pago';
+const API_CANCHAS = 'http://localhost:3000/api/v1/canchas';
+const API_RESERVAS = 'http://localhost:3000/api/v1/reservas';
+const API_METODOS_PAGO = 'http://localhost:3000/api/v1/metodos-pago';
 
 /* =========================================================
    INTERFAZ DE CANCHA
@@ -331,9 +332,6 @@ const Pagos: React.FC = () => {
       }
 
       setCargandoTarjetas(true);
-
-      // Eliminar el almacenamiento antiguo que contenía
-      // números completos de tarjetas.
       localStorage.removeItem('fu_saved_cards');
 
       try {
@@ -346,6 +344,13 @@ const Pagos: React.FC = () => {
         });
 
         const datos = await respuesta.json();
+
+        if (respuesta.status === 401 || respuesta.status === 403 || (datos.mensaje && datos.mensaje.toLowerCase().includes('token'))) {
+           // Si el token expiró o es inválido, limpiamos localStorage y pedimos login
+           localStorage.removeItem('token');
+           localStorage.removeItem('user_logged_in');
+           throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        }
 
         if (!respuesta.ok) {
           throw new Error(
@@ -380,7 +385,6 @@ const Pagos: React.FC = () => {
 
         if (tarjetasBD.length > 0) {
           const primera = tarjetasBD[0];
-
           setSelectedCardId(primera.id);
           setCardNumber(primera.numberMasked);
           setCardHolder(primera.holder);
@@ -403,11 +407,14 @@ const Pagos: React.FC = () => {
           setCardHolder('');
           setCardExpiry('');
 
-          setErrorMsg(
-            error instanceof Error
-              ? error.message
-              : 'No se pudieron cargar las tarjetas guardadas.'
-          );
+          const errorMsgStr = error instanceof Error ? error.message : 'No se pudieron cargar las tarjetas guardadas.';
+          setErrorMsg(errorMsgStr);
+          
+          if(errorMsgStr.includes('Sesión expirada')){
+             setTimeout(() => {
+                router.push('/login', 'root', 'replace');
+             }, 2000);
+          }
         }
       } finally {
         if (activo) {
@@ -664,7 +671,6 @@ const Pagos: React.FC = () => {
     let ultimosCuatroParaReserva = '';
 
     if (tarjetaGuardada) {
-      // Las tarjetas guardadas solo contienen los últimos cuatro dígitos.
       if (!/^\d{4}$/.test(tarjetaGuardada.last4)) {
         setErrorMsg('Los datos de la tarjeta guardada no son válidos.');
         return;
@@ -699,7 +705,6 @@ const Pagos: React.FC = () => {
 
       ultimosCuatroParaReserva = tarjetaGuardada.last4;
     } else {
-      // Validar una tarjeta nueva ingresada para esta simulación.
       cleanCardNum = cardNumber.replace(/\s/g, '');
 
       if (cleanCardNum.length !== 15 && cleanCardNum.length !== 16) {
@@ -740,8 +745,6 @@ const Pagos: React.FC = () => {
       ultimosCuatroParaReserva = cleanCardNum.slice(-4);
     }
 
-    // El CVV se valida solo para esta simulación.
-    // Nunca se almacena ni se envía a los endpoints del backend.
     if (!/^\d{3,4}$/.test(cardCvv)) {
       setErrorMsg(
         'Ingresa el código de seguridad (CVV) de 3 o 4 dígitos.'
@@ -778,10 +781,7 @@ const Pagos: React.FC = () => {
     try {
       /* =================================================
          VOLVER A CONSULTAR LA CANCHA
-         Para comprobar que siga habilitada y que
-         el precio no haya cambiado.
          ================================================= */
-
       const respuestaCanchas = await fetch(API_CANCHAS);
       const datosCanchas = await respuestaCanchas.json();
 
@@ -803,7 +803,6 @@ const Pagos: React.FC = () => {
           Number(cancha.id) === canchaIdNum
       );
 
-      // Comprobar que todavía exista y esté habilitada.
       if (!canchaActual) {
         throw new Error(
           'La cancha ya no está habilitada para reservar. Regresa a los horarios y selecciona otra.'
@@ -823,8 +822,6 @@ const Pagos: React.FC = () => {
         );
       }
 
-      // Si cambió el precio, actualizar el resumen
-      // y pedir al usuario que revise antes de continuar.
       if (precioActual !== Number(infoCancha.precio_hora)) {
         setInfoCancha({
           id: Number(canchaActual.id),
@@ -839,7 +836,6 @@ const Pagos: React.FC = () => {
         );
       }
 
-      // Usar los datos actuales de la cancha.
       const canchaConfirmada: CanchaBackend = {
         id: Number(canchaActual.id),
         nombre: String(canchaActual.nombre),
@@ -855,9 +851,7 @@ const Pagos: React.FC = () => {
 
       /* =================================================
          REGISTRAR RESERVA EN POSTGRESQL
-         El backend vuelve a comprobar la disponibilidad.
          ================================================= */
-
       const respuestaReserva = await fetch(
         API_RESERVAS,
         {
@@ -884,8 +878,6 @@ const Pagos: React.FC = () => {
         );
       }
 
-      // Comprobar que el backend haya devuelto
-      // el identificador de la reserva creada.
       const reservaId = data?.reserva?.id;
 
       if (!reservaId) {
@@ -895,9 +887,39 @@ const Pagos: React.FC = () => {
       }
 
       /* =================================================
-         GENERAR COMPROBANTE
+         INTEGRACIÓN EMAILJS: NOTIFICACIÓN DE RESERVA (EF 1)
          ================================================= */
+      try {
+        const correoUsuario = localStorage.getItem('userEmail');
+        const nombreUsuario = localStorage.getItem('userName') || 'Deportista';
 
+        if (correoUsuario) {
+          const templateParams = {
+            to_name: nombreUsuario,
+            to_email: correoUsuario,
+            cancha: canchaConfirmada.nombre,
+            fecha: fechaReserva,
+            horario: horarioReserva,
+            precio: formatearPrecio(montoConfirmado)
+          };
+
+          await emailjs.send(
+            'service_f87jd0c',
+            'template_e2fsb5v',
+            templateParams,
+            'cSuY7Qpek6E40r4WM'
+          );
+          console.log('✉️ ¡Correo de confirmación enviado con éxito a:', correoUsuario, '!');
+        } else {
+          console.warn('No se encontró el correo del usuario en localStorage, omitiendo envío.');
+        }
+      } catch (error) {
+        console.error('Error al enviar el correo con EmailJS:', error);
+      }
+
+      /* =================================================
+         GENERAR COMPROBANTE VISUAL
+         ================================================= */
       const randomCode = `FU-${Math.floor(
         100000 + Math.random() * 900000
       )}`;
@@ -914,49 +936,23 @@ const Pagos: React.FC = () => {
         estado: 'Confirmada',
       };
 
-      /* =================================================
-         MANTENER HISTORIAL LOCAL DEL PERFIL
-         La reserva principal ya fue guardada en PostgreSQL.
-         ================================================= */
-
       try {
-        const existingStr = localStorage.getItem(
-          'fu_user_reservations'
-        );
-
-        const existingList: UserReservation[] =
-          existingStr
-            ? JSON.parse(existingStr)
-            : [];
-
-        const historial = Array.isArray(existingList)
-          ? existingList
-          : [];
+        const existingStr = localStorage.getItem('fu_user_reservations');
+        const existingList: UserReservation[] = existingStr ? JSON.parse(existingStr) : [];
+        const historial = Array.isArray(existingList) ? existingList : [];
 
         localStorage.setItem(
           'fu_user_reservations',
-          JSON.stringify([
-            nuevaReserva,
-            ...historial,
-          ])
+          JSON.stringify([nuevaReserva, ...historial])
         );
-
       } catch (error) {
-        // Un problema con el historial local no debe
-        // invalidar una reserva que ya se guardó en PostgreSQL.
-        console.warn(
-          'No se pudo actualizar el historial local:',
-          error
-        );
+        console.warn('No se pudo actualizar el historial local:', error);
       }
 
-      // Actualizar los datos de la cancha.
       setInfoCancha(canchaConfirmada);
       setCodigoReserva(randomCode);
       setUltimosCuatroUsados(ultimosCuatroParaReserva);
       setErrorMsg('');
-
-      // Mostrar comprobante.
       setShowSuccessModal(true);
 
     } catch (error) {
@@ -964,13 +960,11 @@ const Pagos: React.FC = () => {
         'Error al confirmar la reserva:',
         error
       );
-
       setErrorMsg(
         error instanceof Error
           ? error.message
           : 'Ocurrió un error al registrar la reserva.'
       );
-
     } finally {
       setIsProcessing(false);
     }

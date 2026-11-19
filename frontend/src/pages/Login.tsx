@@ -41,7 +41,7 @@ const Login: React.FC = () => {
     setErrorMsg('');
 
     try {
-      const respuesta = await fetch('http://localhost:3000/api/usuarios/login', {
+      const respuesta = await fetch('http://localhost:3000/api/v1/usuarios/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

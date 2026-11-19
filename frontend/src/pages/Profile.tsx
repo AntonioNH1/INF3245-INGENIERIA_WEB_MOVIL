@@ -33,8 +33,8 @@ import {
 import { useLocation } from 'react-router-dom';
 import './Profile.css';
 
-const API_USUARIOS = 'http://localhost:3000/api/usuarios';
-const API_METODOS_PAGO = 'http://localhost:3000/api/metodos-pago';
+const API_USUARIOS = 'http://localhost:3000/api/v1/usuarios';
+const API_METODOS_PAGO = 'http://localhost:3000/api/v1/metodos-pago';
 
 /* =========================================================
    INTERFACES Y TIPOS
@@ -329,7 +329,7 @@ const Profile: React.FC = () => {
 
       try {
         const respuesta = await fetch(
-          'http://localhost:3000/api/reservas/mis-reservas',
+          'http://localhost:3000/api/v1/reservas/mis-reservas',
           {
             method: 'GET',
             headers: {
@@ -687,7 +687,7 @@ const Profile: React.FC = () => {
       setErrorMsg('');
 
       const respuesta = await fetch(
-        `http://localhost:3000/api/reservas/mis-reservas/${idBD}/solicitar-cancelacion`,
+        `http://localhost:3000/api/v1/reservas/mis-reservas/${idBD}/solicitar-cancelacion`,
         {
           method: 'PATCH',
           headers: {

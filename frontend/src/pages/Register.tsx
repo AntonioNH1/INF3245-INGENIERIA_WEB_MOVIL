@@ -144,7 +144,7 @@ const validateRut = (rutStr: string) => {
     setIsProcessing(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/usuarios/registro', {
+      const response = await fetch('http://localhost:3000/api/v1/usuarios/registro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
