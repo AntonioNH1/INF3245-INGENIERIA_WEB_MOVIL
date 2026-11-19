@@ -184,13 +184,15 @@ const Profile: React.FC = () => {
           },
         });
 
-        const datos = await respuesta.json();
+        const jsonRespuesta = await respuesta.json();
 
         if (!respuesta.ok) {
           throw new Error(
-            datos.mensaje || 'No se pudieron cargar los métodos de pago.'
+            jsonRespuesta.mensaje || 'No se pudieron cargar los métodos de pago.'
           );
         }
+
+        const datos = jsonRespuesta.tarjetas || jsonRespuesta.metodosPago || jsonRespuesta;
 
         if (!Array.isArray(datos)) {
           throw new Error('La respuesta de métodos de pago no es válida.');

@@ -430,18 +430,17 @@ const CourtSchedule: React.FC = () => {
           `${API_RESERVAS}/disponibilidad?fecha=${encodeURIComponent(appliedFecha)}`
         );
 
-        const datos: unknown = await respuesta.json();
+        const jsonRespuesta: any = await respuesta.json();
 
         if (!respuesta.ok) {
-          const mensaje =
-            typeof datos === 'object' &&
-            datos !== null &&
-            'mensaje' in datos
-              ? String((datos as { mensaje: unknown }).mensaje)
-              : 'No se pudo consultar la disponibilidad.';
-
+          const mensaje = jsonRespuesta?.mensaje 
+            ? String(jsonRespuesta.mensaje) 
+            : 'No se pudo consultar la disponibilidad.';
           throw new Error(mensaje);
         }
+
+        // CORRECCIÓN: Extraemos el arreglo 'ocupados' del nuevo objeto JSON del backend
+        const datos = jsonRespuesta.ocupados || jsonRespuesta;
 
         if (!Array.isArray(datos)) {
           throw new Error(
@@ -779,7 +778,7 @@ const CourtSchedule: React.FC = () => {
               {!cargando &&
                 !errorCarga &&
                 resultados.length === 0 && (
-                  <p>
+                  <p className="no-results-message">
                     No hay horarios disponibles para los filtros seleccionados.
                   </p>
                 )}

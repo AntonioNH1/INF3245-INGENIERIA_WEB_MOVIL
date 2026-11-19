@@ -464,3 +464,29 @@ Los principales códigos de respuesta HTTP que pueden aparecer son:
 
 Se recomienda ejecutar las pruebas de registro y autenticación antes de probar las rutas que requieren autorización.
 
+---
+
+## 11. Notas y Correcciones de la Entrega Parcial 2 (EP2)
+
+Para esta entrega se han aplicado refactorizaciones y mejoras basadas en la rúbrica de evaluación:
+
+### 1. Base de Datos (`init.sql`)
+*   **Datos fijos y reproducibilidad:** Se han eliminado los inserts aleatorios (`random()`) de las reservas. Ahora el script inserta datos de prueba fijos (fechas relativas a `CURRENT_DATE`) para garantizar que las pruebas sean consistentes en cada evaluación.
+*   **Ejecución Segura:** Se agregaron instrucciones `DROP TABLE IF EXISTS CASCADE` al inicio del script, lo que permite que el `init.sql` sea 100% reproducible sin generar errores de duplicidad de datos.
+*   **Restricciones de Integridad:** Se implementaron validaciones `CHECK` a nivel de base de datos para los roles de usuario (`cliente`, `admin`), estados de reserva, validación de `hora_fin > hora_inicio` y precio mayor a 0.
+
+### 2. Arquitectura Backend (MVC)
+*   **Separación de Responsabilidades:** El archivo `reservas.js` fue refactorizado siguiendo el patrón de diseño MVC. La lógica de negocio y las consultas SQL se separaron en el archivo `controllers/reservasController.js`, y las validaciones de fechas/horarios en `utils/validacionesReserva.js`.
+*   **Middleware Centralizado:** La validación de permisos de administrador se extrajo a un middleware propio (`middleware/admin.js`) para evitar la repetición de código en las rutas.
+
+### 3. API REST y Seguridad
+*   **Versionamiento:** Todas las rutas del servidor han sido actualizadas para incluir el prefijo de versión correspondiente (`/api/v1/...`).
+*   **Códigos HTTP:** Se ajustaron las respuestas para utilizar los códigos correctos según el estándar REST (ej. `401 Unauthorized` para fallos de login y `409 Conflict` para registros duplicados).
+*   **JSON Estandarizado:** Se corrigieron los endpoints que devolvían arrays crudos; ahora todas las respuestas son objetos JSON estructurados (ej. `{ "canchas": [...] }`).
+*   **Paginación:** Se implementó paginación (`LIMIT` / `OFFSET`) en el listado de reservas para administradores, optimizando la transferencia de datos.
+
+### 4. Aclaración de Endpoints Específicos
+*   **Rutas de Cancelación:** El sistema cuenta con dos endpoints de cancelación justificados por su contexto de uso:
+    *   `PATCH /mis-reservas/:id/solicitar-cancelacion`: Utilizada por el *cliente* para enviar el motivo por el cual no puede asistir. Cambia el estado a pendiente de revisión.
+    *   `PATCH /:id/resolver-cancelacion` y `PATCH /:id/cancelar`: Utilizadas exclusivamente por el *administrador* para rechazar/aprobar la solicitud del cliente o para realizar una cancelación forzada (por lluvia, mantenimiento, etc.) de manera inmediata.
+*   **Métodos DELETE:** Se implementó el método HTTP `DELETE` tanto para la gestión de usuarios (Hard Delete) como de reservas, restringido únicamente al rol `admin`.

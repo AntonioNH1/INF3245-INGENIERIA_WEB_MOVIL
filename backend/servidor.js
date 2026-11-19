@@ -1,8 +1,14 @@
-
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const pool = require('./db'); // Conexión a la base de datos
+
+// VALIDACIÓN CRÍTICA: Asegurar que el secreto JWT exista al levantar el servidor
+if (!process.env.JWT_SECRET) {
+    console.error('ERROR CRÍTICO: JWT_SECRET no está definido en el archivo .env');
+    process.exit(1); // Detiene el servidor porque la autenticación no funcionaría
+}
+
+require('./db'); // Inicializa la base de datos automáticamente
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,26 +17,22 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Rutas de usuarios
-const rutasUsuarios = require('./routes/usuarios');
-app.use('/api/usuarios', rutasUsuarios);
-
-// Rutas de canchas
-const rutasCanchas = require('./routes/canchas');
-app.use('/api/canchas', rutasCanchas);
-
-// Rutas de reservas
-const rutasReservas = require('./routes/reservas');
-app.use('/api/reservas', rutasReservas);
-
-// Rutas de métodos de pago
-const rutasMetodosPago = require('./routes/metodosPago');
-app.use('/api/metodos-pago', rutasMetodosPago);
+// Rutas
+app.use('/api/usuarios', require('./routes/usuarios'));
+app.use('/api/canchas', require('./routes/canchas'));
+app.use('/api/reservas', require('./routes/reservas'));
+app.use('/api/metodos-pago', require('./routes/metodosPago'));
 
 app.get('/', (req, res) => {
-    res.json({ mensaje: '¡Servidor de FaltaUno funcionando!' });
+    res.json({ mensaje: '¡Servidor de FaltaUno funcionando correctamente!' });
 });
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+
+// Rutas (con prefijo de versión V1)
+app.use('/api/v1/usuarios', require('./routes/usuarios'));
+app.use('/api/v1/canchas', require('./routes/canchas'));
+app.use('/api/v1/reservas', require('./routes/reservas'));
+app.use('/api/v1/metodos-pago', require('./routes/metodosPago'));

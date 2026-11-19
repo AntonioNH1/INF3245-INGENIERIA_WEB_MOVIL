@@ -1,0 +1,158 @@
+const pool = require('../db');
+const { ESTADOS_QUE_OCUPAN_HORARIO, esFechaValida, esHoraValida, validarHorarioReserva, validarFechaYHoraReserva } = require('../utils/validacionesReserva');
+
+const crearReserva = async (req, res) => {
+    const usuarioId = Number(req.usuario?.id);
+    const canchaId = Number(req.body?.cancha_id);
+    const { fecha_reserva, hora_inicio, hora_fin } = req.body;
+
+    if (!Number.isInteger(usuarioId) || usuarioId <= 0) return res.status(401).json({ mensaje: 'No se pudo identificar al usuario de la sesión.' });
+    if (!Number.isInteger(canchaId) || canchaId <= 0) return res.status(400).json({ mensaje: 'Identificador de cancha inválido.' });
+
+    const errorHorario = validarHorarioReserva(hora_inicio, hora_fin);
+    if (errorHorario) return res.status(400).json({ mensaje: errorHorario });
+
+    const errorFecha = validarFechaYHoraReserva(fecha_reserva, hora_inicio);
+    if (errorFecha) return res.status(400).json({ mensaje: errorFecha });
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        const cancha = await client.query(`SELECT id, disponible FROM Canchas WHERE id = $1 FOR UPDATE`, [canchaId]);
+        if (cancha.rows.length === 0) { await client.query('ROLLBACK'); return res.status(404).json({ mensaje: 'La cancha no existe.' }); }
+        if (!cancha.rows[0].disponible) { await client.query('ROLLBACK'); return res.status(409).json({ mensaje: 'Cancha deshabilitada.' }); }
+
+        const conflicto = await client.query(
+            `SELECT id FROM Reservas WHERE cancha_id = $1 AND fecha_reserva = $2::date AND LOWER(TRIM(COALESCE(estado, ''))) = ANY($5::text[]) AND hora_inicio < $4::time AND hora_fin > $3::time LIMIT 1`,
+            [canchaId, fecha_reserva, hora_inicio, hora_fin, ESTADOS_QUE_OCUPAN_HORARIO]
+        );
+        if (conflicto.rows.length > 0) { await client.query('ROLLBACK'); return res.status(409).json({ mensaje: 'Horario ya reservado.' }); }
+
+        const nuevaReserva = await client.query(
+            `INSERT INTO Reservas (usuario_id, cancha_id, fecha_reserva, hora_inicio, hora_fin) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [usuarioId, canchaId, fecha_reserva, hora_inicio, hora_fin]
+        );
+        await client.query('COMMIT');
+        return res.status(201).json({ mensaje: 'Reserva confirmada.', reserva: nuevaReserva.rows[0] });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error(error);
+        return res.status(500).json({ mensaje: 'Error al procesar reserva.' });
+    } finally { client.release(); }
+};
+
+const obtenerDisponibilidad = async (req, res) => {
+    const fecha = req.query.fecha;
+    if (!esFechaValida(fecha)) return res.status(400).json({ mensaje: 'Fecha inválida (YYYY-MM-DD).' });
+    try {
+        const resultado = await pool.query(
+            `SELECT cancha_id, TO_CHAR(fecha_reserva, 'YYYY-MM-DD') AS fecha_reserva, TO_CHAR(hora_inicio, 'HH24:MI') AS hora_inicio, TO_CHAR(hora_fin, 'HH24:MI') AS hora_fin FROM Reservas WHERE fecha_reserva = $1::date AND LOWER(TRIM(COALESCE(estado, ''))) = ANY($2::text[]) ORDER BY cancha_id, hora_inicio`,
+            [fecha, ESTADOS_QUE_OCUPAN_HORARIO]
+        );
+        return res.json({ ocupados: resultado.rows }); // Corregido: Ahora devuelve un objeto, no un array crudo
+    } catch (error) { return res.status(500).json({ mensaje: 'Error al consultar horarios ocupados.' }); }
+};
+
+const buscarDisponibles = async (req, res) => {
+    const { deporte, fecha, hora_inicio } = req.query;
+    if (!deporte || !esFechaValida(fecha) || !esHoraValida(hora_inicio)) return res.status(400).json({ mensaje: 'Parámetros inválidos.' });
+    try {
+        const resultado = await pool.query(`
+            SELECT c.id, c.nombre, c.tipo_deporte, c.precio_hora FROM Canchas c WHERE c.disponible = TRUE AND LOWER(TRIM(c.tipo_deporte)) = LOWER(TRIM($1)) AND c.id NOT IN (SELECT cancha_id FROM Reservas WHERE fecha_reserva = $2::date AND hora_inicio = $3::time AND LOWER(TRIM(COALESCE(estado, ''))) = ANY($4::text[]))`,
+            [deporte, fecha, hora_inicio, ESTADOS_QUE_OCUPAN_HORARIO]
+        );
+        return res.json({ canchas: resultado.rows }); // Corregido: Ahora devuelve un objeto
+    } catch (error) { return res.status(500).json({ mensaje: 'Error interno al buscar canchas.' }); }
+};
+
+const obtenerMisReservas = async (req, res) => {
+    try {
+        const resultado = await pool.query(`
+            SELECT r.id, r.fecha_reserva, r.hora_inicio, r.hora_fin, r.estado, r.motivo_cancelacion, c.nombre AS cancha_nombre, c.tipo_deporte, c.precio_hora FROM Reservas r INNER JOIN Canchas c ON r.cancha_id = c.id WHERE r.usuario_id = $1 ORDER BY r.fecha_reserva DESC, r.hora_inicio DESC`, [req.usuario.id]);
+        return res.json({ reservas: resultado.rows }); // Corregido: Ahora devuelve un objeto
+    } catch (error) { return res.status(500).json({ mensaje: 'Error al obtener historial.' }); }
+};
+
+const obtenerTodas = async (req, res) => {
+    // Paginación: Por defecto trae la página 1, con límite de 10 reservas por página
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = Math.max(1, Number(req.query.limit) || 10);
+    const offset = (page - 1) * limit;
+
+    try {
+        const resultado = await pool.query(`
+            SELECT r.id, r.fecha_reserva, r.hora_inicio, r.hora_fin, r.estado, r.motivo_cancelacion, 
+                   u.nombre AS usuario_nombre, u.email AS usuario_email, 
+                   c.nombre AS cancha_nombre, c.tipo_deporte 
+            FROM Reservas r 
+            INNER JOIN Usuarios u ON r.usuario_id = u.id 
+            INNER JOIN Canchas c ON r.cancha_id = c.id 
+            ORDER BY r.fecha_reserva DESC, r.hora_inicio ASC
+            LIMIT $1 OFFSET $2`, 
+            [limit, offset]
+        );
+
+        // Opcional: contar el total de registros para que el frontend sepa cuántas páginas hay
+        const totalRegistros = await pool.query(`SELECT COUNT(*) FROM Reservas`);
+
+        return res.json({ 
+            reservas: resultado.rows,
+            paginacion: {
+                total: parseInt(totalRegistros.rows[0].count),
+                pagina_actual: page,
+                limite: limit
+            }
+        }); 
+    } catch (error) { 
+        return res.status(500).json({ mensaje: 'Error al obtener reservas.' }); 
+    }
+};
+// Nota (Corrección Rúbrica): Se mantienen dos rutas de cancelación separadas porque "cancelarAdmin" es una cancelación forzada inmediata por la administración, mientras que "resolverCancelacion" procesa una solicitud iniciada por el cliente.
+const cancelarAdmin = async (req, res) => {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ mensaje: 'ID inválido.' });
+    try {
+        const resultado = await pool.query(`UPDATE Reservas SET estado = 'cancelada' WHERE id = $1 RETURNING id, estado`, [id]);
+        if (resultado.rows.length === 0) return res.status(404).json({ mensaje: 'No se encontró reserva.' });
+        return res.json({ mensaje: 'Reserva cancelada (Forzada).', reserva: resultado.rows[0] });
+    } catch (error) { return res.status(500).json({ mensaje: 'Error al cancelar.' }); }
+};
+
+const solicitarCancelacion = async (req, res) => {
+    const id = Number(req.params.id);
+    const motivo = req.body?.motivo;
+    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ mensaje: 'ID inválido.' });
+    if (typeof motivo !== 'string' || !motivo.trim()) return res.status(400).json({ mensaje: 'Indica el motivo.' });
+    try {
+        const resultado = await pool.query(`UPDATE Reservas SET estado = 'cancelacion_solicitada', motivo_cancelacion = $1 WHERE id = $2 AND usuario_id = $3 AND LOWER(TRIM(COALESCE(estado, ''))) = 'confirmada' RETURNING id, estado, motivo_cancelacion`, [motivo.trim(), id, req.usuario.id]);
+        if (resultado.rows.length === 0) return res.status(404).json({ mensaje: 'No se encontró reserva confirmada.' });
+        return res.json({ mensaje: 'Solicitud enviada.', reserva: resultado.rows[0] });
+    } catch (error) { return res.status(500).json({ mensaje: 'Error al solicitar.' }); }
+};
+
+const resolverCancelacion = async (req, res) => {
+    const id = Number(req.params.id);
+    const decision = String(req.body?.decision || '').trim().toLowerCase();
+    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ mensaje: 'ID inválido.' });
+    if (!['aprobar', 'rechazar'].includes(decision)) return res.status(400).json({ mensaje: 'Decisión debe ser aprobar o rechazar.' });
+    
+    const nuevoEstado = decision === 'aprobar' ? 'cancelada' : 'cancelacion_rechazada';
+    try {
+        const resultado = await pool.query(`UPDATE Reservas SET estado = $1 WHERE id = $2 AND LOWER(TRIM(COALESCE(estado, ''))) = 'cancelacion_solicitada' RETURNING id, estado, motivo_cancelacion`, [nuevoEstado, id]);
+        if (resultado.rows.length === 0) return res.status(409).json({ mensaje: 'Reserva sin solicitud pendiente.' });
+        return res.json({ mensaje: decision === 'aprobar' ? 'Cancelación aprobada.' : 'Solicitud rechazada.', reserva: resultado.rows[0] });
+    } catch (error) { return res.status(500).json({ mensaje: 'Error al resolver.' }); }
+};
+
+// NUEVO MÉTODO EXIGIDO POR RÚBRICA: Hard Delete de una reserva (Solo Admin)
+const eliminarReservaAdmin = async (req, res) => {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ mensaje: 'ID inválido.' });
+    try {
+        const resultado = await pool.query(`DELETE FROM Reservas WHERE id = $1 RETURNING id`, [id]);
+        if (resultado.rows.length === 0) return res.status(404).json({ mensaje: 'No se encontró la reserva.' });
+        return res.json({ mensaje: 'Reserva eliminada permanentemente de la base de datos.' });
+    } catch (error) { return res.status(500).json({ mensaje: 'Error al eliminar reserva.' }); }
+};
+
+module.exports = { crearReserva, obtenerDisponibilidad, buscarDisponibles, obtenerMisReservas, obtenerTodas, cancelarAdmin, solicitarCancelacion, resolverCancelacion, eliminarReservaAdmin };
