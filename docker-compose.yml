@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: faltauno-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: faltauno
+    ports:
+      # Se usa 5433 por fuera para no chocar con tu PostgreSQL local en el 5432
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Crea las tablas automáticamente la primera vez que arranca el contenedor
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d faltauno"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: faltauno-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_USER: postgres
+      DB_PASSWORD: admin
+      # Dentro de Docker, el host es el nombre del servicio (db), no localhost
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: faltauno
+      JWT_SECRET: SU_CLAVE_SECRETA
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: faltauno-frontend
+    restart: unless-stopped
+    ports:
+      # Se publica en el puerto 8100 para mantener compatibilidad con el CORS del backend
+      - "8100:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
