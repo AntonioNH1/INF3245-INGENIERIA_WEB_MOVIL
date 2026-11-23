@@ -153,6 +153,7 @@ Las entidades principales son:
 - **Hashing de contraseñas:** BcryptJS.
 - **Base de Datos:** PostgreSQL.
 - **Conexión a la base de datos:** paquete `pg`.
+- **Contenerización y Despliegue:** Docker, Docker Compose y Nginx.
 - **Control de versiones:** Git y GitHub.
 - **Herramientas de pruebas y diseño:** Postman y Figma.
 
@@ -160,19 +161,11 @@ Las entidades principales son:
 
 ## 9. Instrucciones de Instalación, Configuración y Ejecución
 
-El siguiente instructivo detalla el proceso para descargar el código fuente, configurar la base de datos PostgreSQL y ejecutar los componentes Backend y Frontend de FaltaUno en un entorno local.
+El proyecto puede ejecutarse de dos maneras: levantando el **entorno local de forma manual** (PostgreSQL, Backend y Frontend por separado) o mediante **Docker Compose**, que levanta y conecta los tres servicios automáticamente.
 
-### Requisitos previos
+### Paso Previo: Obtener el Código Fuente desde GitHub
 
-- Node.js instalado.
-- PostgreSQL instalado y funcionando.
-- pgAdmin para administrar la base de datos.
-- Visual Studio Code u otro editor de código.
-- Postman para realizar las pruebas de la API.
-
-### Paso 1: Obtener el Código Fuente desde GitHub
-
-Puede obtener el proyecto mediante la terminal (Git) o descargándolo directamente desde el navegador.
+Este paso es común para ambas modalidades de ejecución.
 
 **Opción A (Mediante Git):**
 
@@ -180,7 +173,7 @@ Puede obtener el proyecto mediante la terminal (Git) o descargándolo directamen
 2. Ejecute:
 
    ```bash
-   git clone https://github.com/AntonioNH1/INF3245-INGENIERIA_WEB_MOVIL.git
+   git clone [https://github.com/AntonioNH1/INF3245-INGENIERIA_WEB_MOVIL.git](https://github.com/AntonioNH1/INF3245-INGENIERIA_WEB_MOVIL.git)
    ```
 
 3. Ingrese a la carpeta del proyecto:
@@ -193,9 +186,23 @@ Puede obtener el proyecto mediante la terminal (Git) o descargándolo directamen
 
 1. En la página principal del repositorio en GitHub, haga clic en el botón verde **Code**.
 2. Seleccione **Download ZIP**.
-3. Extraiga el archivo comprimido en una ruta accesible de su equipo y abra la carpeta resultante en su editor de código preferido (por ejemplo, Visual Studio Code).
+3. Extraiga el archivo comprimido en una ruta accesible de su equipo y abra la carpeta resultante en Visual Studio Code.
 
-### Paso 2: Configuración de la Base de Datos
+---
+
+### Modalidad 1: Ejecución Manual (Frontend y Backend por separado)
+
+Esta modalidad requiere tener instalados y configurados los servicios directamente en el equipo local.
+
+#### Requisitos previos
+
+- Node.js instalado.
+- PostgreSQL instalado y funcionando.
+- pgAdmin para administrar la base de datos.
+- Visual Studio Code u otro editor de código.
+- Postman para realizar las pruebas de la API (opcional).
+
+#### Paso 1: Configuración de la Base de Datos
 
 1. Inicie el servicio local de PostgreSQL y abra pgAdmin.
 2. En el panel izquierdo, despliegue el servidor PostgreSQL correspondiente.
@@ -204,41 +211,32 @@ Puede obtener el proyecto mediante la terminal (Git) o descargándolo directamen
 5. Mantenga como propietario el usuario correspondiente a su instalación de PostgreSQL (por ejemplo, `postgres`).
 6. Presione **Save** para crear la base de datos.
 
-**Ejecución del archivo init.sql:**
+**Ejecución del archivo `init.sql`:**
 
 1. En pgAdmin, seleccione la base de datos `faltauno`.
 2. Haga clic derecho sobre ella y seleccione **Query Tool**.
-3. En la ventana de consulta, seleccione el botón para abrir un archivo SQL.
-4. Busque el archivo `init.sql`, ubicado dentro de la carpeta `backend` del proyecto.
-5. Abra el archivo y compruebe que la conexión de Query Tool corresponda a la base de datos `faltauno`.
-6. Ejecute el script utilizando el botón de ejecución o la tecla `F5`.
-7. Revise la pestaña **Messages** y compruebe que la consulta termine correctamente.
+3. En la ventana de consulta, abra el archivo `init.sql`, ubicado dentro de la carpeta `backend` del proyecto.
+4. Compruebe que la conexión de Query Tool corresponda a la base de datos `faltauno`.
+5. Ejecute el script utilizando el botón de ejecución o la tecla `F5`.
+6. Revise la pestaña **Messages** y compruebe que la consulta termine correctamente.
 
-El archivo `init.sql` contiene instrucciones para crear las tablas e incorporar los datos iniciales de prueba.
+> **Importante:** En ejecución manual, el backend no ejecuta automáticamente el archivo `init.sql`; por lo tanto, debe cargarse desde pgAdmin antes de iniciar las pruebas. El script crea las tablas `Usuarios`, `Canchas`, `Reservas` y `MetodosPago` e inserta los datos iniciales de prueba.
 
-**Importante:** El backend no ejecuta automáticamente el archivo `init.sql`. Por lo tanto, este debe ejecutarse manualmente desde pgAdmin antes de iniciar las pruebas de la aplicación.
+#### Paso 2: Configuración y Ejecución del Servidor (Backend)
 
-El script debe incluir la creación de las tablas `Usuarios`, `Canchas`, `Reservas` y `MetodosPago`. La tabla `MetodosPago` debe contener los campos `id`, `usuario_id`, `marca`, `ultimos_cuatro`, `titular`, `vencimiento` y `fecha_registro`, además de su relación con la tabla `Usuarios`.
-
-El archivo debe ejecutarse una sola vez sobre una base de datos nueva. Aunque las instrucciones de creación de tablas utilizan `IF NOT EXISTS`, las inserciones de usuarios, canchas y reservas de prueba no están preparadas para ejecutarse repetidamente sin generar duplicaciones o errores.
-
-### Paso 3: Configuración y Ejecución del Servidor (Backend)
-
-1. Abra una terminal en Visual Studio Code.
-2. Ingrese al directorio del servidor:
+1. Abra una terminal en Visual Studio Code e ingrese al directorio del servidor:
 
    ```bash
    cd backend
    ```
 
-3. Instale las dependencias necesarias:
+2. Instale las dependencias necesarias:
 
    ```bash
    npm install
    ```
 
-4. Cree un archivo denominado `.env` exactamente en la raíz de la carpeta `backend`.
-5. Configure las variables de entorno según los datos de conexión de su instalación de PostgreSQL:
+3. Cree un archivo denominado `.env` en la raíz de la carpeta `backend` con sus credenciales locales de PostgreSQL:
 
    ```env
    PORT=3000
@@ -250,56 +248,96 @@ El archivo debe ejecutarse una sola vez sobre una base de datos nueva. Aunque la
    JWT_SECRET=SU_CLAVE_SECRETA
    ```
 
-6. Reemplace los valores de ejemplo por sus propias credenciales. El valor de `DB_NAME` debe coincidir con el nombre de la base de datos creada en pgAdmin.
-7. Inicie el servidor ejecutando:
+4. Inicie el servidor ejecutando:
 
    ```bash
    npm run dev
    ```
 
-8. Compruebe que la terminal indique que el servidor está escuchando en el puerto 3000 y que se haya establecido la conexión con PostgreSQL.
+5. Compruebe que la terminal indique que el servidor está escuchando en `http://localhost:3000` y que se estableció la conexión con PostgreSQL. Mantenga esta terminal abierta.
 
-La dirección local del backend es:
+*(Nota para Windows: si PowerShell bloquea la ejecución de `npm` por sus políticas de ejecución, utilice `npm.cmd install` y `npm.cmd run dev`).*
 
-`http://localhost:3000`
+#### Paso 3: Ejecución de la Aplicación (Frontend)
 
-Mantenga esta terminal abierta mientras utilice la aplicación.
-
-**Nota para Windows:** Si PowerShell bloquea la ejecución de `npm` por sus políticas de ejecución, puede utilizar `npm.cmd install` y `npm.cmd run dev`.
-
-### Paso 4: Ejecución de la Aplicación (Frontend)
-
-1. Abra una nueva pestaña o ventana de terminal.
-2. Desde la carpeta principal del proyecto, ingrese al directorio del cliente:
+1. Abra una nueva pestaña de terminal en la carpeta principal del proyecto e ingrese al directorio del cliente:
 
    ```bash
    cd frontend
    ```
 
-3. Instale las dependencias:
+2. Instale las dependencias:
 
    ```bash
    npm install
    ```
 
-4. Inicie el servidor de desarrollo:
+3. Inicie el servidor de desarrollo:
 
    ```bash
    npm run dev
    ```
 
-5. Espere a que Vite indique la dirección local de la aplicación en la terminal.
-6. Abra dicha dirección en el navegador web.
+4. Abra en el navegador web la dirección indicada por Vite (por defecto `http://localhost:5173`). Mantenga ambas terminales abiertas mientras utilice FaltaUno.
 
-La dirección predeterminada de Vite suele ser:
+---
 
-`http://localhost:5173`
+### Modalidad 2: Ejecución con Docker (Despliegue Contenerizado)
 
-Mantenga abiertas las terminales del backend y del frontend mientras utilice FaltaUno.
+Esta modalidad orquesta automáticamente la base de datos PostgreSQL (con carga automática de `backend/init.sql`), la API en Node.js y el Frontend compilado en Nginx, sin necesidad de instalar Node.js, instalar PostgreSQL ni crear manualmente el archivo `.env`.
 
-### Paso 5: Cuentas de Prueba (Accesos por Rol)
+#### Requisitos previos
 
-El archivo `init.sql` incorpora usuarios de prueba para facilitar la evaluación de los distintos perfiles del sistema.
+- **Docker Desktop** instalado y en ejecución (motor en estado activo / verde).
+- Puertos `3000`, `8100` y `5433` disponibles (detenga previamente cualquier instancia manual del backend o frontend).
+
+#### Paso 1: Construir y levantar los contenedores
+
+Desde la raíz del proyecto (`INF3245-INGENIERIA_WEB_MOVIL`), ejecute en una terminal:
+
+```bash
+docker compose up --build
+```
+
+*(Si desea liberar la terminal y ejecutar los contenedores en segundo plano, agregue la bandera `-d`: `docker compose up --build -d`).*
+
+#### Paso 2: Verificar los servicios activos
+
+En otra terminal puede comprobar que los tres contenedores (`faltauno-db`, `faltauno-backend` y `faltauno-frontend`) estén activos con:
+
+```bash
+docker compose ps
+```
+
+#### Paso 3: Acceder a la aplicación
+
+Una vez que los logs confirmen que el backend estableció conexión con PostgreSQL, acceda desde el navegador:
+
+- **Frontend (Aplicación Web):** `http://localhost:8100`
+- **Backend (API REST):** `http://localhost:3000`
+- **Base de Datos PostgreSQL (puerto externo):** `localhost:5433` (usuario: `postgres`, contraseña: `admin`, base de datos: `faltauno`).
+
+#### Comandos útiles de Docker
+
+- **Volver a levantar sin cambios en el código:**
+  ```bash
+  docker compose up
+  ```
+- **Detener los contenedores conservando los datos registrados:**
+  ```bash
+  docker compose down
+  ```
+- **Reiniciar la base de datos desde cero (elimina el volumen y vuelve a ejecutar `init.sql`):**
+  ```bash
+  docker compose down -v
+  docker compose up
+  ```
+
+---
+
+### Cuentas de Prueba (Accesos por Rol)
+
+El archivo `init.sql` incorpora usuarios de prueba disponibles en ambas modalidades de ejecución:
 
 **Modo Administrador:**
 
@@ -315,45 +353,36 @@ El archivo `init.sql` incorpora usuarios de prueba para facilitar la evaluación
 - **Contraseña:** `123456`
 - **Rol:** `cliente`.
 
-Estas cuentas se crean al ejecutar correctamente el script de inicialización.
-
 **Asignación del rol de administrador a otro usuario:**
 
-Si se desea otorgar el rol de administrador a un usuario que ya se encuentra registrado, se puede realizar desde pgAdmin:
+Para otorgar el rol de administrador a un usuario ya registrado, ejecute la siguiente sentencia SQL en la base de datos `faltauno` (ya sea desde **pgAdmin** en el puerto `5432` para ejecución manual / puerto `5433` para Docker, o desde la consola del contenedor con `docker exec -it faltauno-db psql -U postgres -d faltauno`):
 
-1. Seleccione la base de datos `faltauno`.
-2. Abra la herramienta **Query Tool**.
-3. Ejecute la siguiente sentencia SQL, reemplazando el correo electrónico por el del usuario correspondiente:
+```sql
+UPDATE Usuarios
+SET rol = 'admin'
+WHERE email = 'correo_del_usuario@ejemplo.com';
+```
 
-   ```sql
-   UPDATE Usuarios
-   SET rol = 'admin'
-   WHERE email = 'correo_del_usuario@ejemplo.com';
-   ```
+Para comprobar el cambio:
 
-4. Para comprobar el cambio, ejecute:
+```sql
+SELECT id, nombre, email, rol
+FROM Usuarios
+WHERE email = 'correo_del_usuario@ejemplo.com';
+```
 
-   ```sql
-   SELECT id, nombre, email, rol
-   FROM Usuarios
-   WHERE email = 'correo_del_usuario@ejemplo.com';
-   ```
+Posteriormente, el usuario debe cerrar sesión y volver a iniciarla para obtener un nuevo token JWT con su rol actualizado.
 
-5. El usuario debe cerrar sesión y volver a iniciarla para obtener un nuevo token JWT con su rol actualizado.
-
-**Importante:** El usuario debe estar registrado previamente. La sentencia solamente modifica el rol de la cuenta cuyo correo electrónico coincida con el indicado.
-
-Las credenciales de prueba son para fines académicos y no deben utilizarse en un entorno de producción.
+> **Nota:** Las credenciales de prueba son para fines académicos y no deben utilizarse en un entorno de producción.
 
 ### Consideraciones de Seguridad
 
 - El archivo `.env` contiene credenciales privadas y no debe subirse al repositorio de GitHub.
-- Cada integrante debe configurar sus propias credenciales de PostgreSQL.
+- Cada integrante debe configurar sus propias credenciales de PostgreSQL en modo local.
 - La variable `JWT_SECRET` debe contener una clave secreta propia.
 - No se deben almacenar números completos de tarjetas ni códigos de seguridad CVV en la base de datos.
 - Los métodos de pago almacenan información parcial de las tarjetas.
 - El proceso de pago de la aplicación es una simulación y no realiza cobros reales mediante una pasarela de pago.
-
 ---
 
 ## 10. Pruebas de la API mediante Postman
