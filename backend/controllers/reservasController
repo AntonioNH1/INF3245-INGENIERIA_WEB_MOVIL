@@ -74,39 +74,138 @@ const obtenerMisReservas = async (req, res) => {
 };
 
 const obtenerTodas = async (req, res) => {
-    // Paginación: Por defecto trae la página 1, con límite de 10 reservas por página
-    const page = Math.max(1, Number(req.query.page) || 1);
-    const limit = Math.max(1, Number(req.query.limit) || 10);
-    const offset = (page - 1) * limit;
-
     try {
-        const resultado = await pool.query(`
-            SELECT r.id, r.fecha_reserva, r.hora_inicio, r.hora_fin, r.estado, r.motivo_cancelacion, 
-                   u.nombre AS usuario_nombre, u.email AS usuario_email, 
-                   c.nombre AS cancha_nombre, c.tipo_deporte 
-            FROM Reservas r 
-            INNER JOIN Usuarios u ON r.usuario_id = u.id 
-            INNER JOIN Canchas c ON r.cancha_id = c.id 
+        // Paginación
+        const page = Math.max(1, Number(req.query.page) || 1);
+        const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
+        const offset = (page - 1) * limit;
+
+        // Filtros recibidos desde el frontend
+        const estado = typeof req.query.estado === 'string'
+            ? req.query.estado.trim().toLowerCase()
+            : '';
+
+        const fecha = typeof req.query.fecha === 'string'
+            ? req.query.fecha.trim()
+            : '';
+
+        const deporte = typeof req.query.deporte === 'string'
+            ? req.query.deporte.trim()
+            : '';
+
+        // Estados permitidos
+        const estadosPermitidos = [
+            'confirmada',
+            'cancelacion_solicitada',
+            'cancelada',
+            'cancelacion_rechazada'
+        ];
+
+        if (estado && !estadosPermitidos.includes(estado)) {
+            return res.status(400).json({
+                mensaje: 'El estado seleccionado no es válido.'
+            });
+        }
+
+        if (fecha && !esFechaValida(fecha)) {
+            return res.status(400).json({
+                mensaje: 'La fecha debe tener el formato YYYY-MM-DD.'
+            });
+        }
+
+        if (deporte.length > 50) {
+            return res.status(400).json({
+                mensaje: 'El deporte seleccionado no es válido.'
+            });
+        }
+
+        // Construir condiciones SQL de manera segura
+        const condiciones = [];
+        const parametros = [];
+
+        if (estado) {
+            parametros.push(estado);
+            condiciones.push(
+                `LOWER(TRIM(COALESCE(r.estado, ''))) = $${parametros.length}`
+            );
+        }
+
+        if (fecha) {
+            parametros.push(fecha);
+            condiciones.push(
+                `r.fecha_reserva = $${parametros.length}::date`
+            );
+        }
+
+        if (deporte) {
+            parametros.push(deporte.toLowerCase());
+            condiciones.push(
+                `LOWER(TRIM(c.tipo_deporte)) = $${parametros.length}`
+            );
+        }
+
+        const whereSQL = condiciones.length > 0
+            ? `WHERE ${condiciones.join(' AND ')}`
+            : '';
+
+        // Consultar reservas filtradas y paginadas
+        const parametrosConsulta = [...parametros, limit, offset];
+
+        const consultaReservas = `
+            SELECT
+                r.id,
+                r.fecha_reserva,
+                r.hora_inicio,
+                r.hora_fin,
+                r.estado,
+                r.motivo_cancelacion,
+                u.nombre AS usuario_nombre,
+                u.email AS usuario_email,
+                c.nombre AS cancha_nombre,
+                c.tipo_deporte
+            FROM Reservas r
+            INNER JOIN Usuarios u ON r.usuario_id = u.id
+            INNER JOIN Canchas c ON r.cancha_id = c.id
+            ${whereSQL}
             ORDER BY r.fecha_reserva DESC, r.hora_inicio ASC
-            LIMIT $1 OFFSET $2`, 
-            [limit, offset]
-        );
+            LIMIT $${parametros.length + 1}
+            OFFSET $${parametros.length + 2}
+        `;
 
-        // Opcional: contar el total de registros para que el frontend sepa cuántas páginas hay
-        const totalRegistros = await pool.query(`SELECT COUNT(*) FROM Reservas`);
+        // Contar solamente los registros que cumplen los filtros
+        const consultaTotal = `
+            SELECT COUNT(*) AS total
+            FROM Reservas r
+            INNER JOIN Canchas c ON r.cancha_id = c.id
+            ${whereSQL}
+        `;
 
-        return res.json({ 
+        const [resultado, totalRegistros] = await Promise.all([
+            pool.query(consultaReservas, parametrosConsulta),
+            pool.query(consultaTotal, parametros)
+        ]);
+
+        const total = Number(totalRegistros.rows[0].total);
+
+        return res.json({
             reservas: resultado.rows,
             paginacion: {
-                total: parseInt(totalRegistros.rows[0].count),
+                total,
                 pagina_actual: page,
-                limite: limit
+                limite: limit,
+                total_paginas: Math.ceil(total / limit)
             }
-        }); 
-    } catch (error) { 
-        return res.status(500).json({ mensaje: 'Error al obtener reservas.' }); 
+        });
+
+    } catch (error) {
+        console.error('Error al obtener reservas:', error);
+
+        return res.status(500).json({
+            mensaje: 'Error al obtener las reservas.'
+        });
     }
 };
+
 // Nota (Corrección Rúbrica): Se mantienen dos rutas de cancelación separadas porque "cancelarAdmin" es una cancelación forzada inmediata por la administración, mientras que "resolverCancelacion" procesa una solicitud iniciada por el cliente.
 const cancelarAdmin = async (req, res) => {
     const id = Number(req.params.id);

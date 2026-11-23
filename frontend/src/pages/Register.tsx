@@ -46,24 +46,47 @@ const Register: React.FC = () => {
   };
 
 const validateRut = (rutStr: string) => {
-    const clean = rutStr.replace(/[^0-9kK]/g, '').toUpperCase();
-    if (clean.length < 8 || clean.length > 9) {
-      return 'El RUT debe tener entre 8 y 9 caracteres (ej: 12.345.678-9).';
-    }
+  const clean = rutStr.replace(/[^0-9kK]/g, '').toUpperCase();
 
-    const body = clean.slice(0, -1);
-    const dv = clean.slice(-1);
+  if (clean.length < 8 || clean.length > 9) {
+    return 'El RUT debe tener entre 8 y 9 caracteres.';
+  }
 
-    if (!/^\d+$/.test(body)) {
-      return 'El cuerpo del RUT solo debe contener números.';
-    }
+  const body = clean.slice(0, -1);
+  const dv = clean.slice(-1);
 
-    if (!/^[0-9K]$/.test(dv)) {
-      return 'El dígito verificador debe ser un número del 0 al 9 o la letra K.';
-    }
+  if (!/^\d+$/.test(body)) {
+    return 'El cuerpo del RUT solo debe contener números.';
+  }
 
-    return '';
-  };
+  if (!/^[0-9K]$/.test(dv)) {
+    return 'El dígito verificador debe ser un número o la letra K.';
+  }
+
+  // Calcular dígito verificador mediante módulo 11
+  let suma = 0;
+  let multiplicador = 2;
+
+  for (let i = body.length - 1; i >= 0; i--) {
+    suma += Number(body[i]) * multiplicador;
+
+    multiplicador =
+      multiplicador === 7 ? 2 : multiplicador + 1;
+  }
+
+  const resto = 11 - (suma % 11);
+
+  const dvCalculado =
+    resto === 11 ? '0' :
+    resto === 10 ? 'K' :
+    String(resto);
+
+  if (dv !== dvCalculado) {
+    return 'El RUT ingresado no es válido. Revisa el dígito verificador.';
+  }
+
+  return '';
+};
 
   /* =========================================================
      FORMATEO Y VALIDACIÓN DE TELÉFONO Y CORREO
@@ -131,10 +154,20 @@ const validateRut = (rutStr: string) => {
       return;
     }
 
-    if (password.length < 4) {
-      setErrorMsg('La contraseña debe tener al menos 4 caracteres.');
-      return;
-    }
+    const passwordValida =
+    password.length >= 8 &&
+    new TextEncoder().encode(password).length <= 72 &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /\d/.test(password) &&
+    /[^A-Za-z0-9\s]/.test(password);
+
+if (!passwordValida) {
+    setErrorMsg(
+        'La contraseña debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un carácter especial.'
+    );
+    return;
+}
 
     if (password !== confirmPassword) {
       setErrorMsg('Las contraseñas ingresadas no coinciden.');
@@ -279,7 +312,7 @@ const validateRut = (rutStr: string) => {
                     <IonIcon icon={lockClosedOutline} className="reg-icon" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="Mín. 4 caracteres"
+                      placeholder="Mín. 8 caracteres"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="reg-input"

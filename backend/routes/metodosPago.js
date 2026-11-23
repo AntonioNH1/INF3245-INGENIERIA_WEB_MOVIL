@@ -31,7 +31,7 @@ router.get('/', verificarToken, async (req, res) => {
 router.post('/', verificarToken, async (req, res) => {
     try {
         const usuarioId = req.usuario.id;
-        const { marca, ultimos_cuatro, titular, vencimiento } = req.body;
+        const { marca, ultimos_cuatro, titular, vencimiento } = req.body || {};
 
         const marcasPermitidas = [
             'VISA',
@@ -52,19 +52,27 @@ router.post('/', verificarToken, async (req, res) => {
             });
         }
 
-        if (!titular || titular.trim().length < 3 || titular.trim().length > 100) {
+        const titularLimpio = typeof titular === 'string'
+            ? titular.trim()
+            : '';
+
+        if (titularLimpio.length < 3 || titularLimpio.length > 100) {
             return res.status(400).json({
                 mensaje: 'El nombre del titular no es válido'
             });
         }
 
-        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(vencimiento || '')) {
+        const vencimientoLimpio = typeof vencimiento === 'string'
+            ? vencimiento.trim()
+            : '';
+
+        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(vencimientoLimpio)) {
             return res.status(400).json({
                 mensaje: 'El vencimiento debe tener el formato MM/AA'
             });
         }
 
-        const [mes, anio] = vencimiento.split('/').map(Number);
+        const [mes, anio] = vencimientoLimpio.split('/').map(Number);
 
         const fechaChile = new Date(
             new Date().toLocaleString('en-US', {
@@ -96,8 +104,8 @@ router.post('/', verificarToken, async (req, res) => {
                 usuarioId,
                 marca,
                 ultimos_cuatro,
-                titular.trim(),
-                vencimiento
+                titularLimpio,
+                vencimientoLimpio
             ]
         );
 
@@ -116,8 +124,8 @@ router.post('/', verificarToken, async (req, res) => {
                 usuarioId,
                 marca,
                 ultimos_cuatro,
-                titular.trim(),
-                vencimiento
+                titularLimpio,
+                vencimientoLimpio
             ]
         );
 

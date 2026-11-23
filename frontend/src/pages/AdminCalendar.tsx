@@ -12,7 +12,8 @@ import {
   IonSpinner,
   IonButton,
   IonIcon,
-  useIonRouter
+  useIonRouter,
+  useIonViewWillEnter
 } from '@ionic/react';
 import {
   menuOutline,
@@ -73,6 +74,22 @@ const claseEstado = (estado: string) => {
 
 const AdminCalendar: React.FC = () => {
   const router = useIonRouter();
+
+    // Controlar la actualización del calendario al volver a ingresar
+  const [recargaPorEntrada, setRecargaPorEntrada] = useState(0);
+  const primeraEntrada = useRef(true);
+
+    // Actualizar información cada vez que se vuelve a entrar al calendario
+  useIonViewWillEnter(() => {
+    // La primera carga ya la realiza el useEffect
+    if (primeraEntrada.current) {
+      primeraEntrada.current = false;
+      return;
+    }
+
+    // En las siguientes entradas se vuelven a consultar las reservas
+    setRecargaPorEntrada((anterior) => anterior + 1);
+  });
   
   // Estados para Reservas y Paginación (Exigencia EP2)
   const [reservas, setReservas] = useState<Reserva[]>([]);
@@ -81,6 +98,8 @@ const AdminCalendar: React.FC = () => {
   const limitePorPagina = 10; // 10 reservas máximo por página
 
   const [fechaFiltro, setFechaFiltro] = useState('');
+  const [estadoFiltro, setEstadoFiltro] = useState('');
+  const [deporteFiltro, setDeporteFiltro] = useState('');
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const [mensajeAccion, setMensajeAccion] = useState('');
@@ -116,17 +135,34 @@ const AdminCalendar: React.FC = () => {
       const token = localStorage.getItem('token');
       const rol = (localStorage.getItem('userRol') || '').trim().toLowerCase();
 
-      if (!token || rol !== 'admin') {
-        router.push('/login', 'root');
-        return;
-      }
+      if (!token || !['admin', 'administrador'].includes(rol)) {
+  router.push('/login', 'root');
+  return;
+}
 
       try {
         setCargando(true);
         setError('');
         
         // Petición al backend V1 incluyendo paginación en la URL
-        const url = `${API_URL}?page=${paginaActual}&limit=${limitePorPagina}`;
+        const parametros = new URLSearchParams({
+  page: String(paginaActual),
+  limit: String(limitePorPagina),
+});
+
+if (estadoFiltro) {
+  parametros.set('estado', estadoFiltro);
+}
+
+if (fechaFiltro) {
+  parametros.set('fecha', fechaFiltro);
+}
+
+if (deporteFiltro) {
+  parametros.set('deporte', deporteFiltro);
+}
+
+const url = `${API_URL}?${parametros.toString()}`;
         
         const respuesta = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` },
@@ -154,11 +190,16 @@ const AdminCalendar: React.FC = () => {
     };
     cargarReservas();
     return () => { activo = false; };
-  }, [router, paginaActual]); // Se recarga cada vez que cambia la página actual
+  }, [
+  router,
+  paginaActual,
+  recargaPorEntrada,
+  estadoFiltro,
+  fechaFiltro,
+  deporteFiltro
+]);
 
-  const reservasFiltradas = fechaFiltro
-    ? reservas.filter((r) => r.fecha_reserva.slice(0, 10) === fechaFiltro)
-    : reservas;
+  const reservasFiltradas = reservas;
 
   const totalPaginas = Math.ceil(totalRegistros / limitePorPagina);
 
@@ -253,15 +294,85 @@ const AdminCalendar: React.FC = () => {
           {error && <div className="admin-alert admin-alert-error">{error}</div>}
 
           <section className="admin-filter-panel">
-            <div className="admin-filter-copy">
-              <h2>Filtro Local</h2>
-              <p>Filtra las reservas que estás viendo actualmente en esta página.</p>
-            </div>
-            <div className="admin-filter-controls">
-              <input type="date" className="admin-date-input" value={fechaFiltro} onChange={(e) => setFechaFiltro(e.target.value)} />
-              <IonButton className="admin-clear-filter" fill="clear" onClick={() => setFechaFiltro('')}>Limpiar</IonButton>
-            </div>
-          </section>
+  <div className="admin-filter-copy">
+    <h2>Filtros de Reservas</h2>
+    <p>
+      Busca reservas por estado, fecha y deporte.
+      Puedes combinar los filtros.
+    </p>
+  </div>
+
+  <div className="admin-filter-controls">
+
+    {/* FILTRO POR ESTADO */}
+    <select
+      className="admin-filter-select"
+      value={estadoFiltro}
+      aria-label="Filtrar por estado"
+      onChange={(e) => {
+        setEstadoFiltro(e.target.value);
+        setPaginaActual(1);
+      }}
+    >
+      <option value="">Todos los estados</option>
+      <option value="confirmada">Confirmadas</option>
+      <option value="cancelacion_solicitada">
+        Cancelación solicitada
+      </option>
+      <option value="cancelada">Canceladas</option>
+      <option value="cancelacion_rechazada">
+        Cancelación rechazada
+      </option>
+    </select>
+
+    {/* FILTRO POR FECHA */}
+    <input
+      type="date"
+      className="admin-date-input"
+      value={fechaFiltro}
+      aria-label="Filtrar por fecha"
+      onChange={(e) => {
+        setFechaFiltro(e.target.value);
+        setPaginaActual(1);
+      }}
+    />
+
+    {/* FILTRO POR DEPORTE */}
+    <select
+      className="admin-filter-select"
+      value={deporteFiltro}
+      aria-label="Filtrar por deporte"
+      onChange={(e) => {
+        setDeporteFiltro(e.target.value);
+        setPaginaActual(1);
+      }}
+    >
+      <option value="">Todos los deportes</option>
+      <option value="Fútbol 7">Fútbol 7</option>
+      <option value="Fútbol 11">Fútbol 11</option>
+      <option value="Pádel">Pádel</option>
+      <option value="Tenis">Tenis</option>
+      <option value="Básquetbol">Básquetbol</option>
+      <option value="Voleibol">Voleibol</option>
+      <option value="Ping Pong">Ping Pong</option>
+    </select>
+
+    {/* LIMPIAR TODOS LOS FILTROS */}
+    <IonButton
+      className="admin-clear-filter"
+      fill="clear"
+      onClick={() => {
+        setEstadoFiltro('');
+        setFechaFiltro('');
+        setDeporteFiltro('');
+        setPaginaActual(1);
+      }}
+    >
+      Limpiar filtros
+    </IonButton>
+
+  </div>
+</section>
 
           <section className="admin-reservations-section">
             <div className="admin-section-heading">

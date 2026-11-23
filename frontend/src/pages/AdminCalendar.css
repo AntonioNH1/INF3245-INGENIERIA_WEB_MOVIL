@@ -1,22 +1,15 @@
+
 /* =========================================================
-   FALTAUNO — PANEL DE ADMINISTRACIÓN (CALENDARIO)
+   FALTAUNO — CALENDARIO
+   ========================================================= */
+
+/* =========================================================
+   CONFIGURACIÓN GENERAL
    ========================================================= */
 
 .admin-page {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: #0f172a;
-}
-
-.admin-toolbar {
-  --background: rgba(255, 255, 255, 0.94);
-  --color: #1e3a8a;
-  --min-height: 70px;
-  backdrop-filter: blur(10px);
-}
-
-.admin-toolbar-title {
-  font-size: 18px;
-  font-weight: 800;
 }
 
 .admin-content {
@@ -45,7 +38,38 @@
   gap: 25px;
 }
 
-/* ENCABEZADO */
+/* =========================================================
+   ENCABEZADO Y BARRA SUPERIOR
+   ========================================================= */
+
+.admin-toolbar {
+  --background: rgba(255, 255, 255, 0.94);
+  --color: #1e3a8a;
+  --min-height: 70px;
+  backdrop-filter: blur(10px);
+}
+
+.admin-toolbar-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.admin-toolbar-menu {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+}
+
+.admin-menu-trigger {
+  background: transparent;
+  border: none;
+  color: #1e3a8a;
+  font-size: 28px;
+  cursor: pointer;
+}
+
 .admin-page-heading {
   display: flex;
   justify-content: space-between;
@@ -76,10 +100,23 @@
   backdrop-filter: blur(10px);
 }
 
-.admin-heading-count span { color: #9ca3af; font-size: 12px; font-weight: 600; }
-.admin-heading-count strong { display: block; color: white; font-size: 28px; font-weight: 800; }
+.admin-heading-count span {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 600;
+}
 
-/* ESTADÍSTICAS */
+.admin-heading-count strong {
+  display: block;
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   TARJETAS DE ESTADÍSTICAS
+   ========================================================= */
+
 .admin-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -109,16 +146,43 @@
   background: var(--stat-color, #3b82f6);
 }
 
-.stat-total { --stat-color: #3b82f6; }
-.stat-confirmed { --stat-color: #10b981; }
-.stat-pending { --stat-color: #f59e0b; }
-.stat-cancelled { --stat-color: #ef4444; }
+.stat-total {
+  --stat-color: #3b82f6;
+}
 
-.admin-stat-label { color: #9ca3af; font-size: 13px; font-weight: 600; }
-.admin-stat-value { color: white; font-size: 28px; font-weight: 800; }
-.admin-stat-caption { color: #6b7280; font-size: 11px; }
+.stat-confirmed {
+  --stat-color: #10b981;
+}
 
-/* FILTROS */
+.stat-pending {
+  --stat-color: #f59e0b;
+}
+
+.stat-cancelled {
+  --stat-color: #ef4444;
+}
+
+.admin-stat-label {
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-stat-value {
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.admin-stat-caption {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+/* =========================================================
+   FILTROS DE RESERVAS
+   ========================================================= */
+
 .admin-filter-panel {
   background: rgba(15, 23, 42, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -127,37 +191,112 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
   backdrop-filter: blur(12px);
 }
 
-.admin-filter-copy h2 { color: white; font-size: 20px; margin: 0 0 5px 0; font-weight: 700; }
-.admin-filter-copy p { color: #9ca3af; margin: 0; font-size: 14px; }
-
-.admin-filter-controls {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+.admin-filter-copy h2 {
+  color: white;
+  font-size: 20px;
+  margin: 0 0 5px;
+  font-weight: 700;
 }
 
+.admin-filter-copy p {
+  color: #9ca3af;
+  margin: 0;
+  font-size: 14px;
+}
+
+.admin-filter-controls {
+  flex: 1 1 650px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-filter-select,
 .admin-date-input {
+  min-width: 180px;
+  padding: 12px 14px;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: white;
-  padding: 12px 15px;
   border-radius: 10px;
-  font-size: 14px;
+  color: white;
+  font-size: 13px;
   outline: none;
   color-scheme: dark;
 }
 
-.admin-clear-filter {
-  --color: #60a5fa;
-  font-weight: 700;
+.admin-filter-select {
+  width: 100%;
+  max-width: 220px;
+  cursor: pointer;
 }
 
-/* LISTADO DE RESERVAS */
+.admin-date-input {
+  min-width: 175px;
+  font-size: 14px;
+}
+
+.admin-filter-select:focus,
+.admin-date-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.15);
+}
+
+.admin-filter-select option {
+  background: #172235;
+  color: white;
+}
+
+.admin-clear-filter {
+  --color: #60a5fa;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   ALERTAS Y ESTADOS DE CARGA
+   ========================================================= */
+
+.admin-alert {
+  padding: 15px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.admin-alert-success {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.admin-alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.admin-state-card {
+  text-align: center;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  color: #9ca3af;
+}
+
+/* =========================================================
+   LISTADO DE RESERVAS
+   ========================================================= */
+
 .admin-reservations-section {
-  background: transparent;
+  background: transparent !important;
 }
 
 .admin-section-heading {
@@ -169,32 +308,76 @@
   padding-bottom: 15px;
 }
 
-.admin-section-heading h2 { color: white; font-size: 22px; font-weight: 700; margin: 0; }
-.admin-section-heading p { color: #9ca3af; font-size: 14px; margin: 5px 0 0 0; }
-
-.admin-reservation-list { background: transparent; padding: 0; }
-
-.admin-reservation-item {
-  --background: rgba(15, 23, 42, 0.72);
-  --padding-start: 0;
-  --inner-padding-end: 0;
-  border: 1px solid rgba(96, 165, 250, 0.22);
-  border-radius: 16px;
-  margin-bottom: 15px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.admin-section-heading h2 {
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
 }
 
-.admin-reservation-label { padding: 20px !important; white-space: normal; }
+.admin-section-heading p {
+  color: #9ca3af;
+  font-size: 14px;
+  margin: 5px 0 0;
+}
+
+/* Contenedor Ionic: evita el fondo blanco */
+
+.admin-reservation-list {
+  --background: transparent;
+  --ion-item-background: transparent;
+  --ion-background-color: transparent;
+
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0;
+}
+
+/* Tarjetas individuales */
+
+.admin-reservation-item {
+  --background: #172235;
+  --ion-item-background: #172235;
+  --color: #f8fafc;
+  --border-color: transparent;
+  --inner-border-width: 0;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+
+  width: 100%;
+  background: #172235 !important;
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  border-radius: 16px;
+  margin: 0 0 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+.admin-reservation-item::part(native) {
+  background: #172235 !important;
+  color: #f8fafc;
+  border-radius: 16px;
+  padding: 0;
+}
+
+.admin-reservation-label {
+  padding: 17px 19px !important;
+  margin: 0;
+  white-space: normal;
+}
+
+/* Cabecera de cada reserva */
 
 .admin-reservation-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+  gap: 12px;
 }
 
 .admin-reservation-code {
+  display: inline-block;
   background: rgba(255, 255, 255, 0.1);
   color: #e5e7eb;
   padding: 4px 8px;
@@ -202,37 +385,83 @@
   font-size: 11px;
   font-weight: 700;
   margin-bottom: 5px;
-  display: inline-block;
 }
 
-.admin-reservation-title-group h3 { color: white; font-size: 18px; font-weight: 700; margin: 0; }
+.admin-reservation-title-group h3 {
+  color: #f8fafc;
+  font-size: 16px;
+  font-weight: 750;
+  margin: 0;
+}
+
+/* Indicadores de estado */
 
 .admin-status-badge {
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
-.admin-status-badge.confirmada { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-.admin-status-badge.solicitud-pendiente { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.admin-status-badge.cancelada { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-.admin-status-badge.solicitud-rechazada { background: rgba(139, 92, 246, 0.15); color: #c084fc; }
+.admin-status-badge.confirmada {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.admin-status-badge.solicitud-pendiente {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.admin-status-badge.cancelada {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.admin-status-badge.solicitud-rechazada {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c084fc;
+}
+
+/* Información interna de cada reserva */
 
 .admin-reservation-info {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  background: rgba(0, 0, 0, 0.2);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  background: #0e192b;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 15px;
   border-radius: 12px;
 }
 
-.admin-info-cell { display: flex; flex-direction: column; gap: 4px; }
-.admin-info-label { color: #9ca3af; font-size: 11px; text-transform: uppercase; }
-.admin-info-cell strong { color: white; font-size: 14px; }
+.admin-info-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 5px;
+}
 
-/* PAGINACIÓN */
+.admin-info-label {
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.admin-info-cell strong {
+  color: #f8fafc;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   PAGINACIÓN
+   ========================================================= */
+
 .admin-pagination-controls {
   display: flex;
   justify-content: space-between;
@@ -263,48 +492,174 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
 }
 
-.admin-page-btn:hover:not(:disabled) { background: rgba(59, 130, 246, 0.4); }
-.admin-page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-/* ALERTAS Y ESTADOS */
-.admin-alert { padding: 15px; border-radius: 12px; font-weight: 600; margin-bottom: 20px; }
-.admin-alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; }
-.admin-alert-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; }
-
-.admin-state-card {
-  text-align: center;
-  padding: 40px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
-  color: #9ca3af;
+.admin-page-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.4);
 }
 
-/* MENÚ HAMBURGUESA */
-.admin-toolbar-menu { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 50; }
-.admin-menu-trigger { background: transparent; border: none; color: #1e3a8a; font-size: 28px; cursor: pointer; }
+.admin-page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   MENÚ HAMBURGUESA
+   ========================================================= */
+
 .admin-menu-dropdown {
-  position: fixed; top: 76px; right: 20px; background: rgba(24, 28, 36, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.18); padding: 10px; border-radius: 16px;
-  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5); z-index: 9999; 
-  width: min(285px, calc(100vw - 28px)); backdrop-filter: blur(18px);
+  position: fixed;
+  top: 76px;
+  right: 20px;
+  width: min(285px, calc(100vw - 28px));
+  background: rgba(24, 28, 36, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  backdrop-filter: blur(18px);
 }
-.admin-menu-heading { border-bottom: 1px solid rgba(255,255,255,0.12); padding: 12px; margin-bottom: 5px; display: flex; flex-direction: column; }
-.admin-menu-heading span { color: white; font-weight: 850; font-size: 13px; }
-.admin-menu-heading small { color: #94a3b8; font-size: 11px; }
+
+.admin-menu-heading {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-menu-heading span {
+  color: white;
+  font-weight: 850;
+  font-size: 13px;
+}
+
+.admin-menu-heading small {
+  color: #94a3b8;
+  font-size: 11px;
+}
 
 .admin-menu-item {
-  width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 12px;
-  background: transparent; border: none; color: white; text-align: left;
-  border-radius: 11px; cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  background: transparent;
+  border: none;
+  color: white;
+  text-align: left;
+  border-radius: 11px;
+  cursor: pointer;
 }
-.admin-menu-item:hover { background: rgba(255, 255, 255, 0.09); }
-.admin-menu-item ion-icon { font-size: 22px; color: #60a5fa; }
-.admin-menu-logout ion-icon { color: #ef4444; }
 
-.admin-menu-item span { display: flex; flex-direction: column; gap: 3px; }
-.admin-menu-item strong { color: white; font-size: 12px; font-weight: 800; }
-.admin-menu-item small { color: #94a3b8; font-size: 10px; }
+.admin-menu-item:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.admin-menu-item ion-icon {
+  font-size: 22px;
+  color: #60a5fa;
+}
+
+.admin-menu-logout ion-icon {
+  color: #ef4444;
+}
+
+.admin-menu-item span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-menu-item strong {
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-menu-item small {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+/* =========================================================
+   DISEÑO RESPONSIVO: TABLETS
+   ========================================================= */
+
+@media (max-width: 850px) {
+  .admin-filter-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filter-controls {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .admin-filter-select,
+  .admin-date-input {
+    flex: 1 1 180px;
+    max-width: none;
+  }
+}
+
+/* =========================================================
+   DISEÑO RESPONSIVO: PANTALLAS PEQUEÑAS
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .admin-reservation-info {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-reservation-label {
+    padding: 14px !important;
+  }
+
+  .admin-reservation-title-group h3 {
+    font-size: 14px;
+  }
+
+  .admin-page-heading h1 {
+    font-size: 25px;
+  }
+
+  .admin-heading-count {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .admin-filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filter-select,
+  .admin-date-input {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .admin-clear-filter {
+    align-self: flex-end;
+  }
+
+  .admin-pagination-controls {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .admin-pagination-buttons {
+    width: 100%;
+  }
+
+  .admin-pagination-buttons .admin-page-btn {
+    flex: 1;
+  }
+}

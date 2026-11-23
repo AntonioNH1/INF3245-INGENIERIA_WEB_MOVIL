@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   IonPage,
@@ -14,6 +14,7 @@ import {
   IonButtons,
   useIonRouter,
   IonIcon,
+  useIonViewWillEnter,
 } from '@ionic/react';
 
 import {
@@ -37,30 +38,30 @@ const SearchCourts: React.FC = () => {
 
   const router = useIonRouter();
 
-  // Comprobar sesión y rol del usuario
-  useEffect(() => {
-    const logged =
-      localStorage.getItem('user_logged_in') === 'true';
+  // Comprobar y actualizar sesión cada vez que se ingresa a la vista
+useIonViewWillEnter(() => {
+  const logged =
+    localStorage.getItem('user_logged_in') === 'true';
 
-    const rol = (localStorage.getItem('userRol') || '')
-      .trim()
-      .toLowerCase();
+  const rol = (localStorage.getItem('userRol') || '')
+    .trim()
+    .toLowerCase();
 
-    setIsLoggedIn(logged);
+  setIsLoggedIn(logged);
 
-    setIsAdmin(
-      logged && ['admin', 'administrador'].includes(rol)
-    );
+  setIsAdmin(
+    logged && ['admin', 'administrador'].includes(rol)
+  );
 
-    if (logged) {
-      const storedName =
-        localStorage.getItem('userName') || 'Usuario';
+  if (logged) {
+    const storedName =
+      localStorage.getItem('userName') || 'Usuario';
 
-      setUserName(storedName);
-    } else {
-      setUserName('Usuario');
-    }
-  }, []);
+    setUserName(storedName);
+  } else {
+    setUserName('Usuario');
+  }
+});
 
   // Cerrar sesión
   const handleLogout = () => {

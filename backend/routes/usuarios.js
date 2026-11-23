@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { rateLimit } = require('express-rate-limit');
 require('dotenv').config();
 
 const pool = require('../db');
@@ -9,6 +10,29 @@ const verificarAdmin = require('../middleware/admin');
 
 const router = express.Router();
 
+// Limitar intentos fallidos de inicio de sesión
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 5,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    skipSuccessfulRequests: true,
+    message: {
+        mensaje: 'Demasiados intentos fallidos. Intenta nuevamente en 15 minutos.'
+    }
+});
+
+// Limitar solicitudes de registro
+const registroLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 10,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: {
+        mensaje: 'Has alcanzado el límite de registros. Intenta nuevamente en una hora.'
+    }
+});
+
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const validarTelefono = (telefono) => {
     if (typeof telefono !== 'string') return false;
@@ -16,8 +40,63 @@ const validarTelefono = (telefono) => {
     return digitos.length >= 9 && digitos.length <= 15 && telefono.length <= 20;
 };
 
+// Validar RUT chileno mediante módulo 11
+const validarRut = (rut) => {
+    if (typeof rut !== 'string') return false;
+
+    const clean = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+
+    if (!/^\d{7,8}[0-9K]$/.test(clean)) {
+        return false;
+    }
+
+    const body = clean.slice(0, -1);
+    const dv = clean.slice(-1);
+
+    let suma = 0;
+    let multiplicador = 2;
+
+    for (let i = body.length - 1; i >= 0; i--) {
+        suma += Number(body[i]) * multiplicador;
+
+        multiplicador =
+            multiplicador === 7 ? 2 : multiplicador + 1;
+    }
+
+    const resto = 11 - (suma % 11);
+
+    const dvCalculado =
+        resto === 11 ? '0' :
+        resto === 10 ? 'K' :
+        String(resto);
+
+    return dv === dvCalculado;
+};
+
+// Validar contraseñas nuevas
+const validarPassword = (password) => {
+    if (typeof password !== 'string') return false;
+
+    const cumpleLongitud =
+        password.length >= 8 &&
+        Buffer.byteLength(password, 'utf8') <= 72;
+
+    const tieneMayuscula = /[A-Z]/.test(password);
+    const tieneMinuscula = /[a-z]/.test(password);
+    const tieneNumero = /\d/.test(password);
+    const tieneEspecial = /[^A-Za-z0-9\s]/.test(password);
+
+    return (
+        cumpleLongitud &&
+        tieneMayuscula &&
+        tieneMinuscula &&
+        tieneNumero &&
+        tieneEspecial
+    );
+};
+
 // POST: REGISTRAR USUARIO
-router.post('/registro', async (req, res) => {
+router.post('/registro', registroLimiter, async (req, res) => {
     try {
         const nombre = String(req.body?.nombre || '').trim();
         const rut = String(req.body?.rut || '').trim();
@@ -30,9 +109,18 @@ router.post('/registro', async (req, res) => {
         }
         if (nombre.length < 3 || nombre.length > 100) return res.status(400).json({ mensaje: 'Nombre entre 3 y 100 caracteres.' });
         if (rut.length > 20 || email.length > 100) return res.status(400).json({ mensaje: 'El RUT o el correo superan la longitud permitida.' });
+        if (!validarRut(rut)) {
+    return res.status(400).json({
+        mensaje: 'El RUT ingresado no es válido. Revisa el número y su dígito verificador.'
+    });
+}
         if (!EMAIL_REGEX.test(email)) return res.status(400).json({ mensaje: 'Ingresa un correo electrónico válido.' });
         if (!validarTelefono(telefono)) return res.status(400).json({ mensaje: 'Ingresa un teléfono válido.' });
-        if (password.length < 4) return res.status(400).json({ mensaje: 'La contraseña debe tener al menos 4 caracteres.' });
+        if (!validarPassword(password)) {
+    return res.status(400).json({
+        mensaje: 'La contraseña debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un carácter especial.'
+    });
+}
 
         const usuarioExistente = await pool.query(
             `SELECT id FROM Usuarios WHERE LOWER(email) = LOWER($1) OR LOWER(rut) = LOWER($2) LIMIT 1`,
@@ -41,7 +129,7 @@ router.post('/registro', async (req, res) => {
 
         if (usuarioExistente.rows.length > 0) {
             // CORRECCIÓN RÚBRICA: 409 Conflict en lugar de 400
-            return res.status(409).json({ mensaje: 'El correo o RUT ya están registrados.' });
+            return res.status(409).json({ mensaje: 'No se pudo completar el registro. Verifica los datos ingresados e inténtalo nuevamente.' });
         }
 
         const passwordEncriptada = await bcrypt.hash(password, 10);
@@ -55,15 +143,16 @@ router.post('/registro', async (req, res) => {
     } catch (error) {
         console.error('Error al registrar usuario:', error);
         if (error.code === '23505') {
-            // CORRECCIÓN RÚBRICA: 409 Conflict
-            return res.status(409).json({ mensaje: 'El correo o RUT ya están registrados.' });
-        }
+    return res.status(409).json({
+        mensaje: 'No se pudo completar el registro. Verifica los datos ingresados e inténtalo nuevamente.'
+    });
+}
         return res.status(500).json({ mensaje: 'Error interno en el servidor.' });
     }
 });
 
 // POST: INICIAR SESIÓN
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
     try {
         const email = String(req.body?.email || '').trim().toLowerCase();
         const password = req.body?.password;
@@ -139,7 +228,11 @@ router.put('/yo', verificarToken, async (req, res) => {
     const quiereCambiarPassword = currentPassword !== undefined || newPassword !== undefined;
     if (quiereCambiarPassword) {
         if (!currentPassword || !newPassword) return res.status(400).json({ mensaje: 'Ingresa la contraseña actual y la nueva.' });
-        if (newPassword.length < 4 || newPassword.length > 72) return res.status(400).json({ mensaje: 'La nueva contraseña debe tener entre 4 y 72 caracteres.' });
+        if (!validarPassword(newPassword)) {
+    return res.status(400).json({
+        mensaje: 'La nueva contraseña debe tener al menos 8 caracteres e incluir una mayúscula, una minúscula, un número y un carácter especial. Máximo 72 bytes.'
+    });
+}
     }
 
     const client = await pool.connect();
