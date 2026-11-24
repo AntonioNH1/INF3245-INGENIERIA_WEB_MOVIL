@@ -26,6 +26,7 @@ import {
 } from 'ionicons/icons';
 
 import './AdminCalendar.css';
+import emailjs from '@emailjs/browser';
 
 // URL actualizada a V1 (Exigencia EP2)
 const API_URL = 'http://localhost:3000/api/v1/reservas';
@@ -90,6 +91,31 @@ const AdminCalendar: React.FC = () => {
     // En las siguientes entradas se vuelven a consultar las reservas
     setRecargaPorEntrada((anterior) => anterior + 1);
   });
+
+  // PEGAR ESTA FUNCIÓN JUSTO ARRIBA DE: const AdminCalendar: React.FC = () => {
+
+const enviarNotificacionReembolso = async (reservaAprobada: Reserva) => {
+  try {
+    const templateParams = {
+      to_email: reservaAprobada.usuario_email, 
+      to_name: reservaAprobada.usuario_nombre,
+      cancha: reservaAprobada.cancha_nombre,
+      fecha: formatearFecha(reservaAprobada.fecha_reserva),
+      horario: `${formatearHora(reservaAprobada.hora_inicio)} - ${formatearHora(reservaAprobada.hora_fin)}`,
+      mensaje_reembolso: "Tu solicitud de cancelación ha sido aprobada. Se realizará el reembolso de tu dinero dentro de 24 horas hábiles solo si aplica (las cancelaciones realizadas a última hora o fuera del plazo mínimo establecido por el recinto no están sujetas a devolución)."
+    };
+
+    await emailjs.send(
+      'service_f87jd0c', 
+      'template_q990hmw', 
+      templateParams,
+      'cSuY7Qpek6E40r4WM' 
+    );
+    console.log('✉️ Correo de reembolso enviado al cliente.');
+  } catch (error) {
+    console.error('Error al enviar el correo de reembolso:', error);
+  }
+};
   
   // Estados para Reservas y Paginación (Exigencia EP2)
   const [reservas, setReservas] = useState<Reserva[]>([]);
@@ -203,7 +229,7 @@ const url = `${API_URL}?${parametros.toString()}`;
 
   const totalPaginas = Math.ceil(totalRegistros / limitePorPagina);
 
-  const resolverSolicitud = async (id: number, decision: 'aprobar' | 'rechazar') => {
+const resolverSolicitud = async (id: number, decision: 'aprobar' | 'rechazar') => {
     if (!window.confirm(`¿Deseas ${decision} la cancelación?`)) return;
     const token = localStorage.getItem('token');
     
@@ -216,6 +242,13 @@ const url = `${API_URL}?${parametros.toString()}`;
       });
       const datos = await respuesta.json();
       if (!respuesta.ok) throw new Error(datos.mensaje);
+
+      if (decision === 'aprobar') {
+        const reservaCancelada = reservas.find(r => r.id === id);
+        if (reservaCancelada) {
+          await enviarNotificacionReembolso(reservaCancelada);
+        }
+      }
 
       setReservas((prev) => prev.map((r) => r.id === id ? { ...r, estado: datos.reserva.estado } : r));
       setMensajeAccion(datos.mensaje);

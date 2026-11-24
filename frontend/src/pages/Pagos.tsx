@@ -150,6 +150,10 @@ const Pagos: React.FC = () => {
 
   const canchaIdNum = Number(id);
 
+
+  const [opcionPago, setOpcionPago] = useState<'tarjeta' | 'efectivo'>('tarjeta');
+
+
   /* =========================================================
      ESTADOS: DATOS DE LA CANCHA
      ========================================================= */
@@ -205,6 +209,10 @@ const Pagos: React.FC = () => {
       horarioReserva
     );
   }, [infoCancha, horarioReserva]);
+
+  const abono25 = montoTotal * 0.25; 
+  const saldoEnRecinto = montoTotal - abono25; 
+  const montoACobrarAhora = opcionPago === 'tarjeta' ? montoTotal : abono25;
 
   /* =========================================================
      CARGAR CANCHA DESDE POSTGRESQL
@@ -852,6 +860,9 @@ const Pagos: React.FC = () => {
       /* =================================================
          REGISTRAR RESERVA EN POSTGRESQL
          ================================================= */
+/* =================================================
+         REGISTRAR RESERVA EN POSTGRESQL
+         ================================================= */
       const respuestaReserva = await fetch(
         API_RESERVAS,
         {
@@ -864,7 +875,7 @@ const Pagos: React.FC = () => {
             cancha_id: canchaConfirmada.id,
             fecha_reserva: fechaReserva,
             hora_inicio: horaInicio,
-            hora_fin: horaFin,
+            hora_fin: horaFin
           }),
         }
       );
@@ -1087,16 +1098,31 @@ const Pagos: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="summary-divider"></div>
+{/* LÍNEA DIVISORIA BLANCA Y GRUESA */}
+                <div style={{ height: '2px', backgroundColor: 'rgba(255, 255, 255, 0.4)', margin: '15px 0', borderRadius: '2px' }}></div>
 
-                {/* TOTAL */}
-                <div className="summary-total-row">
-                  <span>Total a Pagar</span>
-
-                  <span className="total-amount">
-                    {formatearPrecio(montoTotal)}
-                  </span>
-                </div>
+                {/* TOTAL DINÁMICO */}
+                {opcionPago === 'tarjeta' ? (
+                  <div className="summary-total-row">
+                    <span>Total a Pagar</span>
+                    <span className="total-amount">{formatearPrecio(montoACobrarAhora)}</span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="summary-row">
+                      <span className="summary-label">Total de la cancha</span>
+                      <span className="summary-value">{formatearPrecio(montoTotal)}</span>
+                    </div>
+                    <div className="summary-total-row" style={{ marginTop: '12px' }}>
+                      <span style={{ color: '#93c5fd', fontSize: '15px', fontWeight: 'bold' }}>Abono Webpay (25%)</span>
+                      <span className="total-amount" style={{ fontSize: '24px' }}>{formatearPrecio(montoACobrarAhora)}</span>
+                    </div>
+                    <div className="summary-row" style={{ marginTop: '12px', background: 'rgba(74, 222, 128, 0.1)', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(74, 222, 128, 0.3)' }}>
+                      <span style={{ color: '#86efac', fontWeight: 'bold' }}>Saldo en recinto (Efectivo)</span>
+                      <span style={{ color: '#86efac', fontWeight: 'bold', fontSize: '16px' }}>{formatearPrecio(saldoEnRecinto)}</span>
+                    </div>
+                  </>
+                )}
 
                 {infoCancha && (
                   <p style={{
@@ -1161,9 +1187,42 @@ const Pagos: React.FC = () => {
               onSubmit={handleConfirmPayment}
             >
 
-              <div className="section-header">
+<div className="section-header">
                 <IonIcon icon={lockClosedOutline} />
                 <h3>Método de Pago</h3>
+              </div>
+
+              {/* SELECTOR DE OPCIÓN DE PAGO */}
+              <div style={{ marginBottom: '20px', marginTop: '15px' }}>
+                <span style={{ display: 'block', color: '#93c5fd', fontSize: '12px', fontWeight: 800, marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  OPCIÓN DE PAGO
+                </span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setOpcionPago('tarjeta')}
+                    style={{
+                      padding: '12px', borderRadius: '12px', fontWeight: 'bold', border: '1px solid', cursor: 'pointer', transition: '0.2s', flex: 1, fontSize: '13px',
+                      backgroundColor: opcionPago === 'tarjeta' ? '#2563eb' : 'rgba(255,255,255,0.05)',
+                      color: opcionPago === 'tarjeta' ? '#ffffff' : '#cbd5e1',
+                      borderColor: opcionPago === 'tarjeta' ? '#60a5fa' : 'rgba(255,255,255,0.2)'
+                    }}
+                  >
+                    Pago Total (100%)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOpcionPago('efectivo')}
+                    style={{
+                      padding: '12px', borderRadius: '12px', fontWeight: 'bold', border: '1px solid', cursor: 'pointer', transition: '0.2s', flex: 1, fontSize: '13px',
+                      backgroundColor: opcionPago === 'efectivo' ? '#2563eb' : 'rgba(255,255,255,0.05)',
+                      color: opcionPago === 'efectivo' ? '#ffffff' : '#cbd5e1',
+                      borderColor: opcionPago === 'efectivo' ? '#60a5fa' : 'rgba(255,255,255,0.2)'
+                    }}
+                  >
+                    Abonar 25% (Efectivo)
+                  </button>
+                </div>
               </div>
 
               {/* TARJETAS GUARDADAS */}
@@ -1343,7 +1402,7 @@ const Pagos: React.FC = () => {
               </div>
 
               {/* BOTÓN DE CONFIRMACIÓN */}
-              <button
+             <button
                 type="submit"
                 className="btn-confirmar-pago"
                 disabled={
@@ -1355,7 +1414,7 @@ const Pagos: React.FC = () => {
               >
                 {isProcessing
                   ? 'PROCESANDO...'
-                  : `SIMULAR PAGO ${formatearPrecio(montoTotal)} Y CONFIRMAR`}
+                  : `SIMULAR PAGO ${formatearPrecio(montoACobrarAhora)} Y CONFIRMAR`}
               </button>
 
               {!canchaLista && !cargandoCancha && (
