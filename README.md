@@ -3,7 +3,7 @@
 ## 1. Identificación del Equipo y Responsabilidades
 
 - **Bruno Medina:** Configuración de la arquitectura del servidor backend (Node.js/Express), diseño e implementación del modelo relacional en PostgreSQL (MER) y desarrollo de la lógica de administración.
-- **Antonio Navarro:** Integración del frontend (Ionic/React) con la API REST, consumo directo de endpoints en vistas, depuración de errores, validaciones de seguridad en formularios (restricciones de registro y tarjetas) y ejecución de pruebas de integración en Postman.
+- **Antonio Navarro:** Integración del frontend (Ionic/React) con la API REST, consumo directo de endpoints en vistas, depuración de errores, validaciones de seguridad en formularios, ejecución de pruebas en Postman, integración de APIs externas (Open-Meteo y Feriados Chile), implementación del sistema de notificaciones automáticas con EmailJS, configuración de seguridad HTTP (Helmet) y dockerización del frontend/backend.
 - **Annais Legua:** Diseño de la interfaz de usuario (UI/UX) y desarrollo del frontend, incluyendo la vista de Modo Administrador, módulo de métodos de pago, edición de perfil, solicitudes de cancelación de canchas y redacción del script de inicialización de base de datos (`init.sql`).
 
 ---
@@ -65,6 +65,8 @@ Democratizar el acceso a un sistema digital mediante una aplicación web y móvi
 | **RF-09** | El sistema permitirá buscar y auditar reservas por fecha. | Renderiza una lista detallada de todos los turnos registrados para una fecha seleccionada. | Admin |
 | **RF-10** | El sistema permitirá aprobar o rechazar solicitudes de cancelación. | Cambia el estado de la reserva a "Cancelada" o mantiene la confirmación inicial tras la revisión. | Admin |
 | **RF-11** | El sistema permitirá agregar, modificar o eliminar canchas del recinto. | Actualiza el inventario, precio o estado operativo de las instalaciones en la base de datos. | Admin |
+| **RF-12** | El sistema enviará un comprobante de reserva automático al correo electrónico del cliente tras un pago exitoso (vía EmailJS). | Genera y envía un correo real a la bandeja de entrada del usuario. | Cliente |
+| **RF-13** | El sistema consultará y mostrará advertencias dinámicas de días feriados y el pronóstico del clima para la fecha seleccionada. | Renderiza alertas visuales en el buscador si la fecha coincide con feriados o condiciones climáticas específicas. | Cliente |
 
 ### Requerimientos No Funcionales (RNF)
 | ID | Atributo | Descripción y Métrica |
@@ -149,11 +151,13 @@ Las entidades principales son:
 
 - **Frontend:** Ionic Framework, React, TypeScript y Vite.
 - **Backend:** Node.js y Express.js.
-- **Autenticación:** JSON Web Tokens (JWT).
-- **Hashing de contraseñas:** BcryptJS.
-- **Base de Datos:** PostgreSQL.
-- **Conexión a la base de datos:** paquete `pg`.
-- **Contenerización y Despliegue:** Docker, Docker Compose y Nginx.
+- **Base de Datos:** PostgreSQL y paquete `pg`.
+- **Seguridad y Autenticación:** JSON Web Tokens (JWT), BcryptJS (hashing de contraseñas) y Helmet (seguridad HTTP).
+- **APIs y Servicios de Terceros:**
+  - **EmailJS:** Para el envío automatizado de comprobantes de reserva.
+  - **Open-Meteo API:** Para el pronóstico del clima en tiempo real.
+  - **Feriados Chile API (Víctor San Martín):** Para advertencias dinámicas de días festivos.
+- **Contenerización y Despliegue:** Docker y Docker Compose.
 - **Control de versiones:** Git y GitHub.
 - **Herramientas de pruebas y diseño:** Postman y Figma.
 
@@ -173,7 +177,7 @@ Este paso es común para ambas modalidades de ejecución.
 2. Ejecute:
 
    ```bash
-   git clone [https://github.com/AntonioNH1/INF3245-INGENIERIA_WEB_MOVIL.git](https://github.com/AntonioNH1/INF3245-INGENIERIA_WEB_MOVIL.git)
+   git clone https://github.com/AntonioNH1/INF3245-INGENIERIA_WEB_MOVIL.git
    ```
 
 3. Ingrese a la carpeta del proyecto:
@@ -284,12 +288,12 @@ Esta modalidad requiere tener instalados y configurados los servicios directamen
 
 ### Modalidad 2: Ejecución con Docker (Despliegue Contenerizado)
 
-Esta modalidad orquesta automáticamente la base de datos PostgreSQL (con carga automática de `backend/init.sql`), la API en Node.js y el Frontend compilado en Nginx, sin necesidad de instalar Node.js, instalar PostgreSQL ni crear manualmente el archivo `.env`.
+Esta modalidad orquesta automáticamente la base de datos PostgreSQL (con carga automática de `backend/init.sql`), la API en Node.js y el Frontend compilado, sin necesidad de instalar Node.js, instalar PostgreSQL ni crear manualmente el archivo `.env`.
 
 #### Requisitos previos
 
 - **Docker Desktop** instalado y en ejecución (motor en estado activo / verde).
-- Puertos `3000`, `8100` y `5433` disponibles (detenga previamente cualquier instancia manual del backend o frontend).
+- Puertos `3000`, `5173` y `5433` disponibles (detenga previamente cualquier instancia manual del backend o frontend).
 
 #### Paso 1: Construir y levantar los contenedores
 
@@ -313,7 +317,7 @@ docker compose ps
 
 Una vez que los logs confirmen que el backend estableció conexión con PostgreSQL, acceda desde el navegador:
 
-- **Frontend (Aplicación Web):** `http://localhost:8100`
+- **Frontend (Aplicación Web):** `http://localhost:5173`
 - **Backend (API REST):** `http://localhost:3000`
 - **Base de Datos PostgreSQL (puerto externo):** `localhost:5433` (usuario: `postgres`, contraseña: `admin`, base de datos: `faltauno`).
 
@@ -429,7 +433,7 @@ Mantenga abierta la terminal del backend durante las pruebas.
 3. Presione **Send**.
 4. Compruebe que la respuesta sea `201 Created` si el registro se realizó correctamente.
 
-Para probar la validación de registros duplicados, ejecute la solicitud **Registro Duplicado**. La respuesta esperada, según las instrucciones de las pruebas entregadas, es `400 Bad Request`.
+Para probar la validación de registros duplicados, ejecute la solicitud **Registro Duplicado**. La respuesta esperada, según las instrucciones de las pruebas entregadas, es `409 Conflict`.
 
 ### Paso 4: Inicio de sesión y obtención del token JWT
 
@@ -500,22 +504,35 @@ Se recomienda ejecutar las pruebas de registro y autenticación antes de probar 
 Para esta entrega se han aplicado refactorizaciones y mejoras basadas en la rúbrica de evaluación:
 
 ### 1. Base de Datos (`init.sql`)
-*   **Datos fijos y reproducibilidad:** Se han eliminado los inserts aleatorios (`random()`) de las reservas. Ahora el script inserta datos de prueba fijos (fechas relativas a `CURRENT_DATE`) para garantizar que las pruebas sean consistentes en cada evaluación.
-*   **Ejecución Segura:** Se agregaron instrucciones `DROP TABLE IF EXISTS CASCADE` al inicio del script, lo que permite que el `init.sql` sea 100% reproducible sin generar errores de duplicidad de datos.
-*   **Restricciones de Integridad:** Se implementaron validaciones `CHECK` a nivel de base de datos para los roles de usuario (`cliente`, `admin`), estados de reserva, validación de `hora_fin > hora_inicio` y precio mayor a 0.
+-   **Datos fijos y reproducibilidad:** Se han eliminado los inserts aleatorios (`random()`) de las reservas. Ahora el script inserta datos de prueba fijos (fechas relativas a `CURRENT_DATE`) para garantizar que las pruebas sean consistentes en cada evaluación.
+-   **Ejecución Segura:** Se agregaron instrucciones `DROP TABLE IF EXISTS CASCADE` al inicio del script, lo que permite que el `init.sql` sea 100% reproducible sin generar errores de duplicidad de datos.
+-   **Restricciones de Integridad:** Se implementaron validaciones `CHECK` a nivel de base de datos para los roles de usuario (`cliente`, `admin`), estados de reserva, validación de `hora_fin > hora_inicio` y precio mayor a 0.
 
 ### 2. Arquitectura Backend (MVC)
-*   **Separación de Responsabilidades:** El archivo `reservas.js` fue refactorizado siguiendo el patrón de diseño MVC. La lógica de negocio y las consultas SQL se separaron en el archivo `controllers/reservasController.js`, y las validaciones de fechas/horarios en `utils/validacionesReserva.js`.
-*   **Middleware Centralizado:** La validación de permisos de administrador se extrajo a un middleware propio (`middleware/admin.js`) para evitar la repetición de código en las rutas.
+-   **Separación de Responsabilidades:** El archivo `reservas.js` fue refactorizado siguiendo el patrón de diseño MVC. La lógica de negocio y las consultas SQL se separaron en el archivo `controllers/reservasController.js`, y las validaciones de fechas/horarios en `utils/validacionesReserva.js`.
+-   **Middleware Centralizado:** La validación de permisos de administrador se extrajo a un middleware propio (`middleware/admin.js`) para evitar la repetición de código en las rutas.
 
 ### 3. API REST y Seguridad
-*   **Versionamiento:** Todas las rutas del servidor han sido actualizadas para incluir el prefijo de versión correspondiente (`/api/v1/...`).
-*   **Códigos HTTP:** Se ajustaron las respuestas para utilizar los códigos correctos según el estándar REST (ej. `401 Unauthorized` para fallos de login y `409 Conflict` para registros duplicados).
-*   **JSON Estandarizado:** Se corrigieron los endpoints que devolvían arrays crudos; ahora todas las respuestas son objetos JSON estructurados (ej. `{ "canchas": [...] }`).
-*   **Paginación:** Se implementó paginación (`LIMIT` / `OFFSET`) en el listado de reservas para administradores, optimizando la transferencia de datos.
+-   **Versionamiento:** Todas las rutas del servidor han sido actualizadas para incluir el prefijo de versión correspondiente (`/api/v1/...`).
+-   **Códigos HTTP:** Se ajustaron las respuestas para utilizar los códigos correctos según el estándar REST (ej. `401 Unauthorized` para fallos de login y `409 Conflict` para registros duplicados).
+-   **JSON Estandarizado:** Se corrigieron los endpoints que devolvían arrays crudos; ahora todas las respuestas son objetos JSON estructurados (ej. `{ "canchas": [...] }`).
+-   **Paginación:** Se implementó paginación (`LIMIT` / `OFFSET`) en el listado de reservas para administradores, optimizando la transferencia de datos.
 
 ### 4. Aclaración de Endpoints Específicos
-*   **Rutas de Cancelación:** El sistema cuenta con dos endpoints de cancelación justificados por su contexto de uso:
-    *   `PATCH /mis-reservas/:id/solicitar-cancelacion`: Utilizada por el *cliente* para enviar el motivo por el cual no puede asistir. Cambia el estado a pendiente de revisión.
-    *   `PATCH /:id/resolver-cancelacion` y `PATCH /:id/cancelar`: Utilizadas exclusivamente por el *administrador* para rechazar/aprobar la solicitud del cliente o para realizar una cancelación forzada (por lluvia, mantenimiento, etc.) de manera inmediata.
-*   **Métodos DELETE:** Se implementó el método HTTP `DELETE` tanto para la gestión de usuarios (Hard Delete) como de reservas, restringido únicamente al rol `admin`.
+-   **Rutas de Cancelación:** El sistema cuenta con dos endpoints de cancelación justificados por su contexto de uso:
+  -   `PATCH /mis-reservas/:id/solicitar-cancelacion`: Utilizada por el *cliente* para enviar el motivo por el cual no puede asistir. Cambia el estado a pendiente de revisión.
+  -   `PATCH /:id/resolver-cancelacion` y `PATCH /:id/cancelar`: Utilizadas exclusivamente por el *administrador* para rechazar/aprobar la solicitud del cliente o para realizar una cancelación forzada (por lluvia, mantenimiento, etc.) de manera inmediata.
+-   **Métodos DELETE:** Se implementó el método HTTP `DELETE` tanto para la gestión de usuarios (Hard Delete) como de reservas, restringido únicamente al rol `admin`.
+
+---
+
+## 12. Notas y Cumplimiento de la Entrega Final (EF)
+
+Para esta evaluación final, se integraron las siguientes características requeridas explícitamente por la rúbrica:
+
+* **EF1 (Funcionalidades Completas y Notificaciones):** Se cerró el flujo de negocio con el envío real de notificaciones por correo usando **EmailJS** tras la confirmación de pago. Además, se verificó el funcionamiento del CRUD completo en el panel de administrador (Crear, Leer, Actualizar y Eliminar canchas) utilizando transacciones seguras que protegen la integridad referencial (no permite eliminar canchas con reservas activas).
+* **EF3 (Seguridad Avanzada):** Se implementó **Helmet** en el backend para la seguridad de cabeceras HTTP. Se auditó y verificó el uso estricto de consultas parametrizadas (`$1, $2`) en PostgreSQL en todos los endpoints para prevenir Inyección SQL.
+* **EF5 (Integración con Servicios Externos):** Se integraron dos servicios en la vista de agendamiento de canchas:
+  * **Open-Meteo API:** Proporciona el pronóstico del clima (temperatura máxima, mínima y condiciones) ajustado a las coordenadas del recinto.
+  * **Feriados Chile API:** Advierte dinámicamente si la fecha seleccionada por el usuario corresponde a un día festivo nacional.
+* **EF6 (Despliegue Local con Docker):** Se "dockerizó" la aplicación mediante la creación de archivos `Dockerfile` para frontend y backend, orquestados a través de un archivo `docker-compose.yml`, permitiendo levantar el sistema completo con un solo comando.
