@@ -143,8 +143,7 @@ Las entidades principales son:
 - **Reservas:** almacena el usuario asociado, la cancha, fecha, horario, estado y motivo de cancelación.
 - **MetodosPago:** almacena los métodos de pago asociados a cada usuario, incluyendo marca, últimos cuatro dígitos, titular y vencimiento.
 
-![Modelo Relacional](<img width="724" height="699" alt="image" src="https://github.com/user-attachments/assets/6bbbe1bf-68df-48eb-bdbd-101bf8535a2a" />
-)
+![Modelo Relacional](<img width="774" height="678" alt="image" src="https://github.com/user-attachments/assets/edc0d1be-4ee2-4964-bb50-c137bf8d786f" />)
 
 ---
 
