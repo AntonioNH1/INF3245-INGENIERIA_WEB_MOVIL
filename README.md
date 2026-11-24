@@ -1,3 +1,4 @@
+![Uploading image.png…]()
 # FaltaUno - Sistema de Reservas de Canchas Deportivas
 
 ## 1. Identificación del Equipo y Responsabilidades
@@ -143,7 +144,8 @@ Las entidades principales son:
 - **Reservas:** almacena el usuario asociado, la cancha, fecha, horario, estado y motivo de cancelación.
 - **MetodosPago:** almacena los métodos de pago asociados a cada usuario, incluyendo marca, últimos cuatro dígitos, titular y vencimiento.
 
-![Modelo Relacional](https://github.com/user-attachments/assets/ad64658f-83c0-48d6-96c9-d6fd82d15182)
+<img width="774" height="678" alt="Modelo" src="https://github.com/user-attachments/assets/9db47ab1-125f-4d47-8f39-ac62fb57e499" />
+
 
 ---
 
