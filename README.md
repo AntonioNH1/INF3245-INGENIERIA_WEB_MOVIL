@@ -1,4 +1,4 @@
-![Uploading image.png…]()
+
 # FaltaUno - Sistema de Reservas de Canchas Deportivas
 
 ## 1. Identificación del Equipo y Responsabilidades
